@@ -1,6 +1,6 @@
 # autocare_dlt
 
-tx model은 SNUAILAB의 모델 개발 및 Autocare tx의 현장학습을 지원하기 위한 pytorch 기반 training tool입니다.
+Autocare DeepLearning Toolkit은 SNUAILAB의 모델 개발 및 Autocare T의 학습을 지원하기 위한 pytorch 기반 deep learning toolkit입니다.
 ## Updates
 - v0.2
     - HPO 추가
