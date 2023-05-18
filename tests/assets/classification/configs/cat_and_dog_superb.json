@@ -1,0 +1,45 @@
+{
+  "data": {
+    "batch_size_per_gpu": 4,
+    "cache": false,
+    "img_size": [
+      224,
+      224
+    ],
+    "single_cls": false,
+    "test": {
+      "ann": "meta/val",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/classification/cat_and_dog",
+      "type": "SuperbClassificationDataset"
+    },
+    "train": {
+      "ann": "meta/train",
+      "augmentation": {
+        "HorizontalFlip": {
+          "p": 0.5
+        },
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/classification/cat_and_dog",
+      "type": "SuperbClassificationDataset"
+    },
+    "val": {
+      "ann": "meta/val",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/classification/cat_and_dog",
+      "type": "SuperbClassificationDataset"
+    },
+    "workers_per_gpu": 4
+  }
+}

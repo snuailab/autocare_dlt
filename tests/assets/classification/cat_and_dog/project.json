@@ -1,0 +1,59 @@
+{
+  "categorization": {
+    "properties": [
+      {
+        "default_value": "",
+        "description": "",
+        "id": "ba113342-89fd-4887-a2be-f8250cb7fadf",
+        "name": "animal",
+        "options": [
+          {
+            "id": "15fcf1d4-360d-482c-9fc2-4bcda889f46c",
+            "name": "dog"
+          },
+          {
+            "id": "efb6e81f-bac0-4269-9147-29c4a72dc9cc",
+            "name": "cat"
+          }
+        ],
+        "render_value": false,
+        "required": true,
+        "type": "radio"
+      },
+      {
+        "default_value": [],
+        "description": "",
+        "id": "bb8d751f-f51a-4046-9b37-347f46771dc2",
+        "name": "color",
+        "options": [
+          {
+            "id": "9aa2d4cf-8949-4871-8e8b-d7a88ec6f341",
+            "name": "black"
+          },
+          {
+            "id": "4ad4875c-2a0d-49b1-a518-4407ad43d0b4",
+            "name": "white"
+          },
+          {
+            "id": "215d8533-8ae3-4d55-b82d-9c356d34e259",
+            "name": "else"
+          }
+        ],
+        "render_value": false,
+        "required": false,
+        "type": "checkbox"
+      }
+    ]
+  },
+  "data_type": "image",
+  "object_detection": {
+    "annotation_types": [
+      "image category"
+    ],
+    "keypoints": [],
+    "object_classes": [],
+    "object_groups": []
+  },
+  "type": "image-siesta",
+  "version": "0.6.1"
+}

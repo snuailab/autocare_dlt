@@ -1,0 +1,45 @@
+{
+  "classes": [
+    "age"
+  ],
+  "loss": {
+    "reg_loss": {
+      "name": "MSELoss",
+      "params": {
+        "reduction": "mean"
+      }
+    }
+  },
+  "lr_cfg": {
+    "decay": 0.1,
+    "steps": [
+      16,
+      22
+    ],
+    "type": "step",
+    "warmup": true,
+    "warmup_epochs": 0.5
+  },
+  "max_epoch": 24,
+  "model": {
+    "backbone": {
+      "name": "efficientnetv2_rw_s"
+    },
+    "head": {
+      "in_channels": 1792,
+      "name": "RegressionHead"
+    },
+    "neck": {
+      "name": "Identity"
+    }
+  },
+  "num_classes": 1,
+  "optim": {
+    "lr": 0.002,
+    "momentum": 0.9,
+    "name": "Adam",
+    "weight_decay": 0.0005
+  },
+  "seed": 123,
+  "task": "Regressor"
+}

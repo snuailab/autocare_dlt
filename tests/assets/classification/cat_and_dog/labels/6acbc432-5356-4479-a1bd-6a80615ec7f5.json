@@ -1,0 +1,25 @@
+{
+  "categories": {
+    "properties": [
+      {
+        "option_ids": [
+          "4ad4875c-2a0d-49b1-a518-4407ad43d0b4"
+        ],
+        "option_names": [
+          "white"
+        ],
+        "property_id": "bb8d751f-f51a-4046-9b37-347f46771dc2",
+        "property_name": "color",
+        "type": "checkbox"
+      },
+      {
+        "option_id": "efb6e81f-bac0-4269-9147-29c4a72dc9cc",
+        "option_name": "cat",
+        "property_id": "ba113342-89fd-4887-a2be-f8250cb7fadf",
+        "property_name": "animal",
+        "type": "radio"
+      }
+    ]
+  },
+  "objects": []
+}

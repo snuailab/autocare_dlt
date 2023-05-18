@@ -1,0 +1,12 @@
+{
+  "categories": {
+    "properties": [
+      {
+        "property_id": "0",
+        "property_name": "age",
+        "type": "free response",
+        "value": "38"
+      }
+    ]
+  }
+}

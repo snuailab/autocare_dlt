@@ -1,0 +1,16 @@
+{
+  "data_key": "dog.12.jpg",
+  "dataset": "cat-and-dog-test",
+  "image_info": {
+    "height": 161,
+    "width": 98
+  },
+  "label_id": "319662d8-069f-4cd2-9c87-5ee2c453f75a",
+  "label_path": [
+    "labels/319662d8-069f-4cd2-9c87-5ee2c453f75a.json"
+  ],
+  "last_updated_date": "2022-03-08T03:58:39.834666Z",
+  "status": "SUBMITTED",
+  "tags": [],
+  "work_assignee": "huijae.lee@snuailab.ai"
+}

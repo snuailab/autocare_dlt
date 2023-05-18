@@ -1,0 +1,14 @@
+{
+  "data_key": "RS_2022_02_02_13_00_00_7740_0.9401_0.0815_0.png",
+  "dataset": "test_regression_dataset",
+  "image_info": {
+    "height": 267,
+    "width": 634
+  },
+  "label_id": "RS_2022_02_02_13_00_00_7740_0.9401_0.0815_0.png",
+  "label_path": [
+    "labels/RS_2022_02_02_13_00_00_7740_0.9401_0.0815_0.png.json"
+  ],
+  "status": "SUBMITTED",
+  "work_assignee": "huijae.lee@snuailab.ai"
+}

@@ -1,0 +1,20 @@
+{
+  "categories": {
+    "properties": [
+      {
+        "option_ids": [
+          "9aa2d4cf-8949-4871-8e8b-d7a88ec6f341",
+          "4ad4875c-2a0d-49b1-a518-4407ad43d0b4"
+        ],
+        "option_names": [
+          "black",
+          "white"
+        ],
+        "property_id": "bb8d751f-f51a-4046-9b37-347f46771dc2",
+        "property_name": "color",
+        "type": "checkbox"
+      }
+    ]
+  },
+  "objects": []
+}

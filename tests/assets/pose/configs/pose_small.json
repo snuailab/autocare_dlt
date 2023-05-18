@@ -1,0 +1,48 @@
+{
+  "data": {
+    "batch_size_per_gpu": 4,
+    "cache": false,
+    "color_rgb": false,
+    "data_format": "jpg",
+    "img_size": [
+      288,
+      384
+    ],
+    "letter_box": false,
+    "single_cls": false,
+    "test": {
+      "ann": "tests/assets/pose/small_coco_pose/annotation.json",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/pose/small_coco_pose/img",
+      "type": "COCOPoseDataset"
+    },
+    "train": {
+      "ann": "tests/assets/pose/small_coco_pose/annotation.json",
+      "augmentation": {
+        "HorizontalFlip": {
+          "p": 0.5
+        },
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/pose/small_coco_pose/img",
+      "type": "COCOPoseDataset"
+    },
+    "val": {
+      "ann": "tests/assets/pose/small_coco_pose/annotation.json",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/pose/small_coco_pose/img",
+      "type": "COCOPoseDataset"
+    },
+    "workers_per_gpu": 4
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "DEBUG_data_sanity": false,
+  "classes": [
+    "nose",
+    "left_eye",
+    "right_eye",
+    "left_ear",
+    "right_ear",
+    "left_shoulder",
+    "right_shoulder",
+    "left_elbow",
+    "right_elbow",
+    "left_wrist",
+    "right_wrist",
+    "left_hip",
+    "right_hip",
+    "left_knee",
+    "right_knee",
+    "left_ankle",
+    "right_ankle"
+  ],
+  "loss": {
+    "joints_mse_loss": {
+      "name": "JointsMSELoss",
+      "params": {
+        "scaled_loss": false
+      }
+    }
+  },
+  "lr_cfg": {
+    "decay": 0.1,
+    "steps": [
+      60,
+      80
+    ],
+    "type": "step"
+  },
+  "max_epoch": 3,
+  "model": {
+    "backbone": {
+      "feature_location": "",
+      "name": "hrnet_w32",
+      "out_indices": [
+        1
+      ]
+    },
+    "head": {
+      "in_channels": 32,
+      "name": "PoseHead",
+      "sigma": 3
+    },
+    "neck": {
+      "name": "Identity"
+    }
+  },
+  "num_classes": 17,
+  "optim": {
+    "lr": 0.001,
+    "name": "Adam",
+    "weight_decay": 0
+  },
+  "seed": null,
+  "task": "PoseEstimation",
+  "use_dual": false
+}

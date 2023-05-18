@@ -1,0 +1,45 @@
+{
+  "data": {
+    "batch_size_per_gpu": 4,
+    "cache": false,
+    "img_size": [
+      256,
+      128
+    ],
+    "single_cls": false,
+    "test": {
+      "ann": "meta/val",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/regression/test_regression_dataset",
+      "type": "SuperbRegressionDataset"
+    },
+    "train": {
+      "ann": "meta/train",
+      "augmentation": {
+        "HorizontalFlip": {
+          "p": 0.5
+        },
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/regression/test_regression_dataset",
+      "type": "SuperbRegressionDataset"
+    },
+    "val": {
+      "ann": "meta/val",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/regression/test_regression_dataset",
+      "type": "SuperbRegressionDataset"
+    },
+    "workers_per_gpu": 2
+  }
+}

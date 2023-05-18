@@ -1,0 +1,81 @@
+{
+  "data": {
+    "batch_size_per_gpu": 4,
+    "img_size": [
+      512
+    ],
+    "test": {
+      "ann": "tests/assets/detection/small_coco/annotation.json",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/detection/small_coco/img",
+      "type": "COCODataset"
+    },
+    "train": {
+      "ann": "tests/assets/detection/small_coco/annotation.json",
+      "augmentation": {
+        "HorizontalFlip": {
+          "p": 0.5
+        },
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/detection/small_coco/img",
+      "type": "COCODataset"
+    },
+    "unlabeled": {
+      "augmentation": {
+        "HorizontalFlip": {
+          "p": 0.5
+        },
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "",
+      "input_paths": "tests/assets/detection/small_coco/img",
+      "strong_augmentation": {
+        "ColorJitter": {
+          "brightness": 0.5,
+          "contrast": 0.5,
+          "hue": 0.5,
+          "p": 0.8,
+          "saturation": 0.5
+        },
+        "Cutout": {
+          "fill_value": 0,
+          "max_h_size": 8,
+          "max_w_size": 8,
+          "num_holes": 8,
+          "p": 0.5
+        },
+        "GaussianBlur": {
+          "p": 0.5,
+          "sigma_limit": [
+            0.1,
+            2.0
+          ]
+        },
+        "ToGray": {
+          "p": 0.2
+        }
+      },
+      "type": "UnlabeledDataset"
+    },
+    "val": {
+      "ann": "tests/assets/detection/small_coco/annotation.json",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/detection/small_coco/img",
+      "type": "COCODataset"
+    },
+    "workers_per_gpu": 4
+  }
+}

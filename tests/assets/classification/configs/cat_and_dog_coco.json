@@ -1,0 +1,45 @@
+{
+  "data": {
+    "batch_size_per_gpu": 4,
+    "cache": false,
+    "img_size": [
+      224,
+      224
+    ],
+    "single_cls": false,
+    "test": {
+      "ann": "tests/assets/classification/cat_and_dog/coco/coco.json",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/classification/cat_and_dog/images",
+      "type": "COCOClassificationDataset"
+    },
+    "train": {
+      "ann": "tests/assets/classification/cat_and_dog/coco/coco.json",
+      "augmentation": {
+        "HorizontalFlip": {
+          "p": 0.5
+        },
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/classification/cat_and_dog/images",
+      "type": "COCOClassificationDataset"
+    },
+    "val": {
+      "ann": "tests/assets/classification/cat_and_dog/coco/coco.json",
+      "augmentation": {
+        "ImageNormalization": {
+          "type": "base"
+        }
+      },
+      "data_root": "tests/assets/classification/cat_and_dog/images",
+      "type": "COCOClassificationDataset"
+    },
+    "workers_per_gpu": 4
+  }
+}

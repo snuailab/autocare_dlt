@@ -1,0 +1,25 @@
+{
+  "categories": {
+    "properties": [
+      {
+        "option_ids": [
+          "9aa2d4cf-8949-4871-8e8b-d7a88ec6f341"
+        ],
+        "option_names": [
+          "black"
+        ],
+        "property_id": "bb8d751f-f51a-4046-9b37-347f46771dc2",
+        "property_name": "color",
+        "type": "checkbox"
+      },
+      {
+        "option_id": "15fcf1d4-360d-482c-9fc2-4bcda889f46c",
+        "option_name": "dog",
+        "property_id": "ba113342-89fd-4887-a2be-f8250cb7fadf",
+        "property_name": "animal",
+        "type": "radio"
+      }
+    ]
+  },
+  "objects": []
+}

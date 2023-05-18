@@ -1,0 +1,32 @@
+{
+  "categorization": {
+    "properties": [
+      {
+        "blank": false,
+        "constraints": {
+          "alphabet": true,
+          "digit": true,
+          "space": true,
+          "special": true
+        },
+        "default_value": "",
+        "description": "",
+        "id": "0",
+        "name": "age",
+        "render_value": false,
+        "type": "free response"
+      }
+    ]
+  },
+  "data_type": "image",
+  "object_detection": {
+    "annotation_types": [
+      "image category"
+    ],
+    "keypoints": [],
+    "object_classes": [],
+    "object_groups": []
+  },
+  "type": "image-siesta",
+  "version": "0.6.3"
+}

@@ -1,0 +1,58 @@
+{
+  "classes": [
+    {
+      "animal": [
+        "dog",
+        "cat"
+      ]
+    }
+  ],
+  "eval_metrics": [
+    "accuracy"
+  ],
+  "input_size": [
+    224
+  ],
+  "loss": {
+    "cls_loss": {
+      "name": "CE_FocalLoss",
+      "params": {
+        "gamma": 2,
+        "ignore_index": -1,
+        "size_average": true
+      }
+    }
+  },
+  "lr_cfg": {
+    "decay": 0.1,
+    "steps": [
+      16,
+      22
+    ],
+    "type": "step",
+    "warmup": true,
+    "warmup_epochs": 0.5
+  },
+  "max_epoch": 2,
+  "model": {
+    "backbone": {
+      "name": "efficientnetv2_rw_s"
+    },
+    "head": {
+      "in_channels": 1792,
+      "name": "ClassificationHead"
+    },
+    "neck": {
+      "name": "Identity"
+    }
+  },
+  "num_classes": 2,
+  "optim": {
+    "lr": 0.002,
+    "momentum": 0.9,
+    "name": "Adam",
+    "weight_decay": 0.0005
+  },
+  "seed": null,
+  "task": "Classifier"
+}
