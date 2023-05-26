@@ -5,9 +5,15 @@ import tempfile
 
 import numpy as np
 import torch
-from fast_coco_eval import COCOeval_fast as COCOeval
+from loguru import logger
 
-# from pycocotools.cocoeval import COCOeval
+try:
+    from fast_coco_eval import COCOeval_fast as COCOeval
+except (ImportError, ModuleNotFoundError):
+    logger.warning(
+        "Install fast-coco-eval is recommended, now using pycocotools."
+    )
+    from pycocotools.cocoeval import COCOeval
 
 
 def coco_evaluation(results, dataset, ann_type="bbox", print_cls_ap=False):

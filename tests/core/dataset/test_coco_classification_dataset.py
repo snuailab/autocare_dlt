@@ -1,8 +1,5 @@
 import unittest
 
-import numpy as np
-import torch
-from attr import has
 from attrdict import AttrDict
 
 from autocare_dlt.core.dataset import COCOClassificationDataset
