@@ -3,7 +3,6 @@ import unittest
 import torch
 
 from autocare_dlt.core.model.detector import YOLOv5
-from autocare_dlt.core.model.utils.functions import tile
 from autocare_dlt.core.utils import det_labels_to_cuda
 
 
