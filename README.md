@@ -27,7 +27,7 @@ pip install -r requirements.txt
 ```
 #### package 설치
 ```bash
-pip install autocare_dlt-0.2.0-py3-none-any.whl
+pip install autocare_dlt
 ```
 
 ## 실행
