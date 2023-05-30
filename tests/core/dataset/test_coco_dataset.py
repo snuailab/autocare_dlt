@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import torch
-from attrdict import AttrDict
+from box import Box
 
 from autocare_dlt.core.dataset import COCODetectionDataset
 
@@ -10,7 +10,7 @@ from autocare_dlt.core.dataset import COCODetectionDataset
 class TestCOCODetectionDataset(unittest.TestCase):
     def setUp(self):
         self.img_size = [512]
-        self.dummy_cfg = AttrDict(
+        self.dummy_cfg = Box(
             {
                 "img_size": self.img_size,
                 "classes": [
@@ -97,12 +97,12 @@ class TestCOCODetectionDataset(unittest.TestCase):
                 ],
             }
         )
-        self.fail_cfg = AttrDict(
+        self.fail_cfg = Box(
             {
                 "img_size": 512,
             }
         )
-        self.dummy_task_cfg = AttrDict(
+        self.dummy_task_cfg = Box(
             {
                 "type": "COCODetectionDataset",
                 "data_root": "tests/assets/detection/small_coco/img",

@@ -1,7 +1,7 @@
 import unittest
 
 import torch
-from attrdict import AttrDict
+from box import Box
 
 from autocare_dlt.core.model.classifier.classifier import Classifier as Model
 
@@ -9,7 +9,7 @@ from autocare_dlt.core.model.classifier.classifier import Classifier as Model
 class TestClassifier(unittest.TestCase):
     def setUp(self):
 
-        self.model_cfg = AttrDict(
+        self.model_cfg = Box(
             {
                 "backbone": {"name": "resnet18"},
                 "neck": {"name": "Identity"},

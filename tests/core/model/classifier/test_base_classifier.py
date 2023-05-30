@@ -1,17 +1,15 @@
 import unittest
 
 import torch
-from attrdict import AttrDict
+from box import Box
 
-from autocare_dlt.core.model.classifier.base_classifier import (
-    BaseClassifier as Model,
-)
-
+from autocare_dlt.core.model.classifier.base_classifier import \
+    BaseClassifier as Model
 
 class TestBaseClassifier(unittest.TestCase):
     def setUp(self):
 
-        self.model_cfg = AttrDict(
+        self.model_cfg = Box(
             {
                 "backbone": {"name": "resnet18"},
                 "neck": {"name": "Identity"},

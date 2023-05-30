@@ -3,7 +3,7 @@ import os
 import shutil
 import unittest
 
-from attrdict import AttrDict
+from box import Box
 
 from autocare_dlt.core.trainer import PoseTrainer
 from autocare_dlt.utils.config import json_to_dict
@@ -30,7 +30,7 @@ class TestPoseTrainer(unittest.TestCase):
                 "fp16": False,
             }
         )
-        self.dummy_cfg = AttrDict(self.dummy_cfg)
+        self.dummy_cfg = Box(self.dummy_cfg)
 
     def tearDown(self):
         # shutil.rmtree(self.trainer.log_path)

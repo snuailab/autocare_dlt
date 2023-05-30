@@ -3,7 +3,7 @@ import json
 import os
 from collections import OrderedDict
 
-from attrdict import AttrDict
+from box import Box
 
 detector_list = ["SSD", "RetinaNet", "YOLOv5", "SSD4Point"]
 classifier_list = ["Classifier"]
@@ -30,7 +30,7 @@ def json_to_dict(json_path):
         return json.load(json_file)
 
 
-def parsing_config(args: AttrDict) -> AttrDict:
+def parsing_config(args: Box) -> Box:
     cfg = OrderedDict()
     model = json_to_dict(args.pop("model_cfg", None))
     data = json_to_dict(args.pop("data_cfg", None))
@@ -46,7 +46,7 @@ def parsing_config(args: AttrDict) -> AttrDict:
                 cfg[k] = v
 
     ema_cfg = (
-        AttrDict(
+        Box(
             {
                 "type": "ema",
                 "decay": 0.9996,
@@ -98,7 +98,7 @@ def parsing_config(args: AttrDict) -> AttrDict:
     #         "[num_classes] is not same with sum of [num_cls_per_attributes]"
     #     )
 
-    return AttrDict(cfg)
+    return Box(cfg)
 
 
 def save_cfg(output_path, cfg):
