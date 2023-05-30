@@ -3,7 +3,7 @@ import os
 import sys
 from typing import Union
 
-from attrdict import AttrDict
+from box import Box
 
 sys.path.append(os.getcwd())
 from loguru import logger
@@ -68,7 +68,7 @@ def run(
     """
     import torch
 
-    args = AttrDict(
+    args = Box(
         {
             "output_name": output_name,
             "model_cfg": model_cfg,

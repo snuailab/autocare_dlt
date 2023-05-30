@@ -2,18 +2,17 @@ import copy
 import unittest
 
 import torch
-from attrdict import AttrDict
+from box import Box
 
-from autocare_dlt.core.model.pose_estimation.pose_estimation import (
-    PoseEstimation as Model,
-)
+from autocare_dlt.core.model.pose_estimation.pose_estimation import \
+    PoseEstimation as Model
 
 
 class TestPoseEstimation(unittest.TestCase):
     def setUp(self):
         super().__init__()
 
-        self.dummy_model_cfg = AttrDict(
+        self.dummy_model_cfg = Box(
             {
                 "backbone": {
                     "name": "hrnet_w32",

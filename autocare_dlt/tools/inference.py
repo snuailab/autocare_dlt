@@ -7,7 +7,7 @@ from typing import Union
 import cv2
 import torch
 import tqdm
-from attrdict import AttrDict
+from box import Box
 from loguru import logger
 from pycocotools.coco import COCO
 
@@ -136,7 +136,7 @@ def run(
         root_dir (str, optional): path for input image when using json input. Defaults to "".
     """
 
-    args = AttrDict(
+    args = Box(
         {
             "inputs": inputs,
             "model_cfg": model_cfg,

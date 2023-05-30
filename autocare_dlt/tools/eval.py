@@ -5,7 +5,7 @@ from typing import Union
 
 import numpy as np
 import torch
-from attrdict import AttrDict
+from box import Box
 from loguru import logger
 
 sys.path.append(os.getcwd())
@@ -57,7 +57,7 @@ def run(
         ckpt (Union[str, dict]): path for checkpoint file or state dict
     """
 
-    args = AttrDict(
+    args = Box(
         {
             "model_cfg": model_cfg,
             "data_cfg": data_cfg,

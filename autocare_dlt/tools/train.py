@@ -6,7 +6,7 @@ import warnings
 from typing import Union
 
 import numpy as np
-from attrdict import AttrDict
+from box import Box
 
 sys.path.append(os.getcwd())
 import torch
@@ -210,7 +210,7 @@ def run(
         ema (bool, optional): wheather to use EMA(exponential moving average) or not. Defaults to False.
     """
 
-    args = AttrDict(
+    args = Box(
         {
             "output_dir": output_dir,
             "exp_name": exp_name,

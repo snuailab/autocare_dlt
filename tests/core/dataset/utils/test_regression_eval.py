@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 import torch
-from attrdict import AttrDict
+from box import Box
 
 from autocare_dlt.core.dataset.utils.regression_eval import (
     get_mae,

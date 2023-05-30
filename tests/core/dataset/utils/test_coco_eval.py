@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 import numpy as np
 import torch
-from attrdict import AttrDict
+from box import Box
 
 from autocare_dlt.core.dataset import *
 from autocare_dlt.core.dataset.utils import (
@@ -19,7 +19,7 @@ from autocare_dlt.core.utils import nms
 class TestCocoEval(unittest.TestCase):
     def setUp(self):
         self.img_size = [512]
-        self.dummy_data_cfg = AttrDict(
+        self.dummy_data_cfg = Box(
             {
                 "img_size": self.img_size,
                 "classes": [
@@ -106,7 +106,7 @@ class TestCocoEval(unittest.TestCase):
                 ],
             }
         )
-        self.dummy_task_cfg = AttrDict(
+        self.dummy_task_cfg = Box(
             {
                 "type": "COCODetectionDataset",
                 "data_root": "tests/assets/detection/small_coco/img",

@@ -3,14 +3,14 @@ import os
 import shutil
 import unittest
 
-from attrdict import AttrDict
+from box import Box
 
 from autocare_dlt.core.trainer import BaseTrainer
 
 
 class TestBaseTrainer(unittest.TestCase):
     def setUp(self):
-        self.dummy_cfg = AttrDict(
+        self.dummy_cfg = Box(
             {
                 "task": "Classifier",
                 "model": {"head": {}},
