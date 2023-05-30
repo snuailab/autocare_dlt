@@ -4,7 +4,7 @@ import os
 import torch
 import torch.nn as nn
 from loguru import logger
-from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.utils.tensorboard import SummaryWriter
 
 from autocare_dlt.core.loss.loss_manager import (
     ClsLossManager,
@@ -83,6 +83,10 @@ class BaseTrainer:
             save_cfg(self.output_path, self.cfg)
 
         logger.add(os.path.join(self.output_path, f"{cfg.exp_name}.log"))
+
+        # log path
+        log_path = os.path.join(self.output_path, cfg.exp_name, "tensorboard")
+        self.tblogger = SummaryWriter(log_path)
 
     def _get_dataloader(self):
         pass

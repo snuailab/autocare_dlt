@@ -12,7 +12,6 @@ sys.path.append(os.getcwd())
 import torch
 import torch.backends.cudnn as cudnn
 from loguru import logger
-from torch.utils.tensorboard import SummaryWriter
 
 from autocare_dlt.core.dataset import build_datasets
 from autocare_dlt.core.model import build_model
@@ -113,10 +112,6 @@ def procs(rank, model, datasets, cfg, return_dict=False):
         and os.path.exists(output_path)
     ):
         raise KeyError(f"exp_name {cfg.exp_name} is already exist")
-
-    # log path
-    log_path = os.path.join(cfg.get("output_dir"), cfg.exp_name, "tensorboard")
-    tblogger = SummaryWriter(log_path)
 
     if cfg.gpus != "-1" and len(cfg.gpus.split(",")) > 1:
         cfg.num_gpus = len(cfg.gpus.split(","))

@@ -159,6 +159,9 @@ class DetectionTrainer(BaseTrainer):
         tags = ["train/lr", "train/loss"]
         values = [self.lr, self.loss_aver.avg]
 
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
+
         if not (self.distributed):
             self.evaluate_and_save_model()
 
@@ -215,6 +218,8 @@ class DetectionTrainer(BaseTrainer):
             tags.append("test/" + tag)
             values.append(x)
 
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
         logger.info("\n" + summary)
 
     def evaluate_and_save_model(self):
@@ -260,6 +265,9 @@ class DetectionTrainer(BaseTrainer):
         for tag, x in cls_ap_dict.items():
             tags.append("val/" + tag)
             values.append(x)
+
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
 
         logger.info("\n" + summary)
 
