@@ -147,6 +147,8 @@ class PoseTrainer(BaseTrainer):
         # loggers
         tags = ["train/lr", "train/loss", "train/accuracy"]
         values = [self.lr, self.loss_aver.avg, self.acc_aver.avg]
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
 
         self.evaluate_and_save_model()
 
@@ -181,6 +183,8 @@ class PoseTrainer(BaseTrainer):
         logger.info(f"Test PCK Score: {score}")
         tags = ["test/PCK"]
         values = [score]
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
 
     def evaluate_and_save_model(self):
         # === Evaluate ===#
@@ -210,6 +214,8 @@ class PoseTrainer(BaseTrainer):
 
         tags = ["val/PCK"]
         values = [score]
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
 
         if score > self.best_score:
             self.best_score = score

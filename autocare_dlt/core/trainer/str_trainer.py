@@ -136,6 +136,8 @@ class StrTrainer(BaseTrainer):
         # loggers
         tags = ["train/lr", "train/loss", "train/accuracy"]
         values = [self.lr, self.loss_aver.avg, self.acc_aver.avg]
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
         self.evaluate_and_save_model()
 
     def test_model(self):
@@ -179,6 +181,9 @@ class StrTrainer(BaseTrainer):
 
             tags.append(f"test/{method}")
             values.append(metric)
+
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
 
         score_text = "\n".join(score_texts)
         logger.info("Test scores\n" + score_text)
@@ -225,6 +230,9 @@ class StrTrainer(BaseTrainer):
 
             tags.append(f"val/{method}")
             values.append(metric)
+
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
 
         score_text = "\n".join(score_texts)
         logger.info("Validation scores\n" + score_text)
