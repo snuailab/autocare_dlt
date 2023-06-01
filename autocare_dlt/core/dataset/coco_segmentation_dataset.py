@@ -24,7 +24,6 @@ class COCOSegmentationDataset(Dataset):
             )
         self.task_cfg = task_cfg
         self.data_root = self.task_cfg.data_root
-        self.letter_box = cfg.get("letter_box", False)
 
         self.img_size = (
             [self.img_size[0], self.img_size[0]]
