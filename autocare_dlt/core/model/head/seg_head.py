@@ -20,7 +20,7 @@ class SegmentationHead(nn.Module):
     def post_processing(self, logits):
         preds = []
         for att_logits in logits:
-            att_logits = att_logits.unsqueeze(2).unsqueeze(2)
+            att_logits = att_logits
             preds.append(att_logits.cpu().detach())
 
         return preds

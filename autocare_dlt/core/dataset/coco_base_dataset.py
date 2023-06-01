@@ -35,8 +35,6 @@ class COCOBaseDataset:
             self.mode = "text_recognition"
         elif self.cfg.task in segmenter_list:
             self.mode = "segmentation"
-            print(self.cfg.task)
-            print(self.mode)
         else:
             raise BaseException(
                 f"COCODataset does not support {self.cfg.task}"

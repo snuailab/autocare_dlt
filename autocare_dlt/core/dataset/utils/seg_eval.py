@@ -9,7 +9,6 @@ def seg_evaluation(output, target, classes, loss_manager):
     cor, tot = 0, 0
     loss_sum = []
     for batch_idx, batched_data in enumerate(output):
-        batched_data = [x.squeeze() for x in batched_data]
         batched_label = target[batch_idx]
         labels_for_loss = []
         for i, data in enumerate(batched_data):

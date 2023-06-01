@@ -285,26 +285,14 @@ class PosePostProcess:
         return resized_keypoints.tolist()
 
 # TODO: SegPostProcess for inference(should be project specific?)
-# class SegPostProcess:
-#     def __init__(self, cfg):
-#         self.classes = list(cfg.classes)
+class SegPostProcess:
+    def __init__(self, cfg):
+        self.classes = list(cfg.classes)
 
-#     def __call__(self, input, meta):
-#         # meta is dummy input now
-#         if isinstance(input, list):
-#             # eval
-#             data_list = []
-#             cate_id = 1
-#             for attr_id, attr in enumerate(input):
-#                 for batch_index, cls in enumerate(attr):
-#                     score, cls_idx = torch.max(cls, dim=0)
-#                     pred_data = {
-#                         "category_id": cate_id + int(cls_idx),
-#                         "score": float(score),
-#                     }
-#                     data_list.append(pred_data)
-#                 cate_id += len(cls)
-#             return data_list
+    def __call__(self, input, meta):
+        # meta is dummy input now
+        if isinstance(input, list):
+            return 0
         
 
 class LetterBoxPreprocess:
