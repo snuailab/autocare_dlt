@@ -14,6 +14,7 @@ from autocare_dlt.utils.config import (
     pose_estimator_list,
     regressor_list,
     str_list,
+    segmenter_list
 )
 
 
@@ -89,6 +90,8 @@ class Inferece:
             return STRPostProcess(cfg)
         elif task in pose_estimator_list:
             return PosePostProcess(cfg)
+        elif task in segmenter_list:
+            return SegPostProcess(cfg)
         else:
             raise ValueError(f"cfg.task: {task} is unsupported task.")
 
@@ -281,6 +284,28 @@ class PosePostProcess:
 
         return resized_keypoints.tolist()
 
+# TODO: SegPostProcess for inference(should be project specific?)
+# class SegPostProcess:
+#     def __init__(self, cfg):
+#         self.classes = list(cfg.classes)
+
+#     def __call__(self, input, meta):
+#         # meta is dummy input now
+#         if isinstance(input, list):
+#             # eval
+#             data_list = []
+#             cate_id = 1
+#             for attr_id, attr in enumerate(input):
+#                 for batch_index, cls in enumerate(attr):
+#                     score, cls_idx = torch.max(cls, dim=0)
+#                     pred_data = {
+#                         "category_id": cate_id + int(cls_idx),
+#                         "score": float(score),
+#                     }
+#                     data_list.append(pred_data)
+#                 cate_id += len(cls)
+#             return data_list
+        
 
 class LetterBoxPreprocess:
     def __init__(self, input_size):

@@ -79,7 +79,10 @@ class ImageAugmentation:
             The `haskeypints_mask` is used for them to be unlabeled back.
             """
             labels = keypoints_transformed * haskeypoints_mask
-
+        
+        elif self.mode == "segmentation":
+            transformed = self.augmentation(image=img, mask=labels)
+        
         else:
             transformed = self.augmentation(image=img)
 
@@ -101,6 +104,9 @@ class ImageAugmentation:
                                 0
                             ]  # normalized height 0-1
                             label[[1, 3]] /= img.shape[1]
+
+        if self.mode == "segmentation":
+            labels = transformed["mask"]
 
         labels = self.labels2tensor(labels)
         return img, labels

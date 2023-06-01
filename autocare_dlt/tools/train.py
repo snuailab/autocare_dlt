@@ -22,6 +22,7 @@ from autocare_dlt.core.trainer import (
     PoseTrainer,
     RegressionTrainer,
     StrTrainer,
+    SegmentationTrainer
 )
 from autocare_dlt.core.utils import init_dist
 from autocare_dlt.utils.config import (
@@ -32,6 +33,7 @@ from autocare_dlt.utils.config import (
     regressor_list,
     str2bool,
     str_list,
+    segmenter_list
 )
 
 
@@ -136,6 +138,8 @@ def procs(rank, model, datasets, cfg, return_dict=False):
         trainer = StrTrainer(model, datasets, cfg)
     elif cfg.task in pose_estimator_list:
         trainer = PoseTrainer(model, datasets, cfg)
+    elif cfg.task in segmenter_list:
+        trainer = SegmentationTrainer(model, datasets, cfg)
     else:
         raise KeyError(f"cfg.task: {cfg.task} is unsupported task.")
 

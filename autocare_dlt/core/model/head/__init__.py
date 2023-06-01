@@ -5,3 +5,4 @@ from .retinanet_head import RetinaNetHead
 from .ssd_head import SSDHead
 from .ssd_head_4Point import SSDHead4Point
 from .yolov5_head import YOLOv5Head
+from .seg_head import SegmentationHead

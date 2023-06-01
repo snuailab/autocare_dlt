@@ -6,6 +6,7 @@ from autocare_dlt.utils.config import (
     detector_list,
     regressor_list,
     str_list,
+    segmenter_list
 )
 
 
@@ -32,6 +33,10 @@ class COCOBaseDataset:
             self.mode = "regression"
         elif self.cfg.task in str_list:
             self.mode = "text_recognition"
+        elif self.cfg.task in segmenter_list:
+            self.mode = "segmentation"
+            print(self.cfg.task)
+            print(self.mode)
         else:
             raise BaseException(
                 f"COCODataset does not support {self.cfg.task}"
