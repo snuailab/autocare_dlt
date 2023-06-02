@@ -276,25 +276,5 @@ class SegmentationTrainer(BaseTrainer):
             if self.rank == 0:
                 logger.info(train_mesg)
 
-        # visualize every first iteration
-        if self.cfg.get("DEBUG_data_sanity", False) and self.iter == 1:
-            # TODO
-            self.model.eval()
-            sup_boxes, sup_scores, sup_labels = self.model(labeled_inputs)
-            sup_outputs = [
-                {"labels": sup_label, "boxes": sup_box, "scores": sup_score}
-                for sup_box, sup_score, sup_label in zip(
-                    sup_boxes, sup_scores, sup_labels
-                )
-            ]
-            self.model.train()
-            save_labels(
-                labeled_inputs[0],
-                labeled_targets[0],
-                sup_outputs[0],
-                save_path=os.path.join(self.output_path, "visualize"),
-                prefix=self.epoch,
-            )
-
     def after_iter(self):
         pass
