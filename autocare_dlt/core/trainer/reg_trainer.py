@@ -143,20 +143,20 @@ class RegressionTrainer(BaseTrainer):
         self._get_lr_scheduler(self.start_lr, self.iters_per_epoch)
 
         # === GPU memory availability check === #
-        gpu_availability = check_gpu_availability(
-            model=self.model,
-            input_size=self.cfg.data.img_size,
-            batch_size=self.cfg.data.batch_size_per_gpu,
-            dtype=self.data_type,
-            gpu_total_mem=torch.cuda.get_device_properties(
-                0
-            ).total_memory,  # Bytes
-        )  # Bool. # TODO: Consider allocated memory
-
-        if not gpu_availability:
-            sys.exit(-1)
-
         if torch.cuda.is_available():
+            gpu_availability = check_gpu_availability(
+                model=self.model,
+                input_size=self.cfg.data.img_size,
+                batch_size=self.cfg.data.batch_size_per_gpu,
+                dtype=self.data_type,
+                gpu_total_mem=torch.cuda.get_device_properties(
+                    0
+                ).total_memory,  # Bytes
+            )  # Bool. # TODO: Consider allocated memory
+
+            if not gpu_availability:
+                sys.exit(-1)
+
             self.cuda()
 
     def after_train(self):
