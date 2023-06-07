@@ -299,7 +299,7 @@ class SegPostProcess:
                 pixels = self.mask2piexls(loc)
                 pred_data = {
                     "segmentation": pixels,
-                    "category_id": int(c)
+                    "category_id": int(c)+1
                 }
                 data_list.append(pred_data)
         
