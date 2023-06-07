@@ -148,8 +148,6 @@ class DrawResults:
         return keypoints_with_img.astype(np.uint8)
 
     def draw_segmentation(self, img, results):
-        print(img.shape)
-        print(self.colors)
         cmap = np.zeros((img.shape[0], img.shape[1], 3))
         for res in results:
             print(list(res.keys()))
