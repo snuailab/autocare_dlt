@@ -154,7 +154,7 @@ class DrawResults:
         for res in results:
             print(list(res.keys()))
             cls= res["category_id"]
-            color = self.colors[cls]
+            color = self.colors[cls-1]
             masks = res["segmentation"]
             for mask in masks:
                 mask = np.array(mask)
