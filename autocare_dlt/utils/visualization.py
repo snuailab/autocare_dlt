@@ -150,7 +150,6 @@ class DrawResults:
     def draw_segmentation(self, img, results):
         cmap = np.zeros((img.shape[0], img.shape[1], 3))
         for res in results:
-            print(list(res.keys()))
             cls= res["category_id"]
             color = self.colors[cls-1]
             masks = res["segmentation"]
