@@ -191,6 +191,7 @@ def putText(img, text, org, font_path, color=(0, 0, 255), font_size=20):
     img = np.array(img_pil)
     return img
 
+# TODO: remove
 import matplotlib.pyplot as plt
 
 def log_graph(train_log, val_log, marker, save_path):
