@@ -1,8 +1,10 @@
 import os
+import os
 import sys
 
 import torch
 import torch.distributed as dist
+import numpy as np
 from loguru import logger
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data.distributed import DistributedSampler
@@ -21,21 +23,17 @@ from autocare_dlt.core.utils import (
 )
 from autocare_dlt.core.utils.functions import check_gpu_availability
 from autocare_dlt.utils.debugging import save_labels
+from autocare_dlt.utils.visualization import log_graph
 
 
 class SegmentationTrainer(BaseTrainer):
     def __init__(self, model, datasets, cfg):
 
-        super().__init__(model, datasets, cfg)
-
-        # === Trainer Configs ===#
-        self.detections_per_img = self.cfg.get("detections_per_img", 100)
-        self.nms_thresh = self.cfg.get("nms_thresh", 0.45)
-        self.min_score = self.cfg.get("min_score", 0.01)
-        self.target_cls = self.cfg.get("target_class", "dummy_class")
-
-        # === Values ===#
-        self.best_loss = 10000000000
+            super().__init__(model, datasets, cfg)
+    
+            self.best_loss = 10000000000        
+            self.train_loss_history = []
+            self.val_loss_history = []
 
     def _get_dataloader(self):
         data_cfg = self.cfg.data
@@ -157,6 +155,12 @@ class SegmentationTrainer(BaseTrainer):
         tags = ["train/lr", "train/loss"]
         values = [self.lr, self.loss_aver.avg]
 
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
+
+        # TODO: remove
+        self.train_loss_history.append(self.loss_aver.avg)
+
         if not (self.distributed):
             self.evaluate_and_save_model()
 
@@ -198,6 +202,12 @@ class SegmentationTrainer(BaseTrainer):
 
         _, mpa, recalls, precisions = seg_evaluation(res, labels, self.cfg.classes, self.loss_manager)
         
+        tags = ["test/mpa"]
+        values = [mpa]
+
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
+
         summary = f"mean pixel accuracy: {mpa:.5f}"
         for c in list(recalls.keys()):
             summary += f"\n{c} - recall: {recalls[c]:.5f}, precision: {precisions[c]:.5f}"
@@ -213,12 +223,22 @@ class SegmentationTrainer(BaseTrainer):
 
         evalmodel.eval()
         res, labels = self.inference(evalmodel, self.val_dataloader)
-
+        
         logger.info("Evaluate..")
    
         val_loss, mpa, recalls, precisions = seg_evaluation(res, labels, self.cfg.classes, self.loss_manager)
         
+        # TODO: remove
+        self.val_loss_history.append(val_loss)
+
+
         # === Log ===#
+        tags = ["val/loss", "val/mpa"]
+        values = [val_loss, mpa]
+
+        for tag, value in zip(tags, values):
+            self.tblogger.add_scalar(tag, value, self.epoch)
+
         summary = f"\nval loss: {val_loss:.5f}\nmean pixel accuracy: {mpa:.5f}"
         for c in list(recalls.keys()):
             summary += f"\n{c} - recall: {recalls[c]:.5f}, precision: {precisions[c]:.5f}"
@@ -233,6 +253,9 @@ class SegmentationTrainer(BaseTrainer):
         )
 
         self.best_loss = min(self.best_loss, val_loss)
+
+        # TODO: remove
+        log_graph(self.train_loss_history, self.val_loss_history, "Loss", self.output_path)
 
     def before_iter(self):
         self.update_lr(self.progress_in_iter())
@@ -258,7 +281,7 @@ class SegmentationTrainer(BaseTrainer):
             sup_outputs, labeled_targets
         )
         loss += sup_loss
-
+        
         # Backward
         self.optimizer.zero_grad()
         loss.backward()
@@ -275,6 +298,28 @@ class SegmentationTrainer(BaseTrainer):
             train_mesg += sup_loss_dict.to_string()
             if self.rank == 0:
                 logger.info(train_mesg)
+        
+        # visualize every first training example
+        # TODO: move to somewhere
+        if self.epoch == 0 and self.iter == 1:
+            sample_image = labeled_inputs[0]
+            sample_mask = labeled_targets[0]["labels"]
+
+            cmap = np.zeros((sample_mask.shape[0], sample_mask.shape[1], 3))
+            colors = np.random.randint(255, size=(len(self.cfg.classes), 3))
+            for cls in range(len(self.cfg.classes)):
+                loc = 1*(sample_mask == cls).cpu().numpy()
+                cmap_temp = []
+                for i in range(3):
+                    cmap_temp.append(np.expand_dims(loc*colors[cls][i], axis=2))
+                cmap_temp = np.concatenate(cmap_temp, axis=2)
+                cmap = cmap + cmap_temp
+
+            sample_image = 255*sample_image.cpu().numpy().transpose(1, 2, 0)
+
+            import cv2
+            visual_sample = cv2.addWeighted(sample_image.astype(np.float64), 0.5, cmap, 0.5, 0)
+            cv2.imwrite(f"{self.output_path}/training_sample.png", visual_sample)
 
     def after_iter(self):
         pass

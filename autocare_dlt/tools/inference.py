@@ -71,7 +71,7 @@ def make_parser():
     )
     parser.add_argument(
         "--input_size",
-        default=[640],
+        default=[],
         nargs="+",
         type=int,
         help="input size of model inference",
@@ -224,6 +224,7 @@ def run(
                 img_paths[idx] if img_paths else os.path.split(img_path)[-1]
             )
             res = inference(model, img)
+
             if draw:
                 img = draw.run(img, res)
                 if cfg.vis:
@@ -235,6 +236,7 @@ def run(
             outputs["images"].append(
                 {"id": img_id, "file_name": img_name, "width": w, "height": h}
             )
+
             for ann in res:
                 ann.update({"id": ann_id, "image_id": img_id})
                 outputs["annotations"].append(ann)

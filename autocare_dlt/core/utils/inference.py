@@ -284,15 +284,68 @@ class PosePostProcess:
 
         return resized_keypoints.tolist()
 
-# TODO: SegPostProcess for inference(should be project specific?)
+
 class SegPostProcess:
     def __init__(self, cfg):
-        self.classes = list(cfg.classes)
+        self.n_classes = len(list(cfg.classes))
 
     def __call__(self, input, meta):
-        # meta is dummy input now
-        if isinstance(input, list):
-            return 0
+        data_list = []
+        for mask in input:
+            mask = mask.numpy()
+            pred = np.argmax(mask, axis=0)
+            for c in range(self.n_classes):
+                loc = 1*(pred == c)
+                pixels = self.mask2piexls(loc)
+                pred_data = {
+                    "segmentation": pixels,
+                    "category_id": int(c)
+                }
+                data_list.append(pred_data)
+        
+        return data_list
+
+    def mask2piexls(self, mask):
+        (x, y) = np.where(mask == 1)
+        x = np.expand_dims(x, axis=1)
+        y = np.expand_dims(y, axis=1)
+        xy = np.concatenate([x, y], axis=1)
+        xy = np.reshape(xy, -1)
+        xy = [xy.tolist()]
+        
+        return xy
+        
+        # output = nms(
+        #     input, self.detections_per_img, self.nms_thresh, self.min_score
+        # )
+        # for ot, mt in zip(output, meta):
+        #     r_h, r_w = mt["ratio"]
+        #     pad_w, pad_h = mt["pad"]
+        #     bboxes = ot["boxes"]
+        #     if len(bboxes) > 0:
+        #         bboxes[:, 0::2] = (
+        #             (bboxes[:, 0::2] * self.input_size[0]) - pad_w
+        #         ) / r_w
+        #         bboxes[:, 1::2] = (
+        #             (bboxes[:, 1::2] * self.input_size[1]) - pad_h
+        #         ) / r_h
+        #         if len(bboxes[0]) == 4:
+        #             bboxes = xyxy2xywh(bboxes).numpy()
+        #         else:
+        #             bboxes = bboxes.numpy()
+        #         # preprocessing: resize
+        #         labels = ot["labels"].numpy()
+        #         scores = ot["scores"].numpy()
+
+        #         for ind in range(bboxes.shape[0]):
+        #             pred_data = {
+        #                 "category_id": int(labels[ind]) + 1,
+        #                 "bbox": np.maximum(bboxes[ind], 0).tolist(),
+        #                 "score": float(scores[ind]),
+        #                 "area": float(bboxes[ind][2] * bboxes[ind][3]),
+        #                 "iscrowd": 0,
+        #             }  # COCO json format
+        #             data_list.append(pred_data)
         
 
 class LetterBoxPreprocess:
@@ -313,18 +366,25 @@ class LetterBoxPreprocess:
 class SimplePreprocess:
     def __init__(self, input_size):
         self.input_size = input_size
+        self.resize = True
+
         if len(self.input_size) > 1:
             self.w, self.h = self.input_size[0], self.input_size[1]
-        else:
+        elif len(self.input_size) == 1:
             self.w, self.h = self.input_size[0], self.input_size[0]
-
+        else: 
+            self.resize = False
+    
     def __call__(self, input):
         h0, w0 = input.shape[:2]
-
-        ratio = (self.h / h0, self.w / w0)
-        input = cv2.resize(
-            input, (self.w, self.h), interpolation=cv2.INTER_AREA
-        )
+        if self.resize:
+            ratio = (self.h / h0, self.w / w0)
+            input = cv2.resize(
+                input, (self.w, self.h), interpolation=cv2.INTER_AREA
+            )
+        else:
+            ratio = (1, 1)
+        
         meta = {"ratio": ratio, "pad": (0, 0), "ori_shape": (h0, w0)}
         return img2tensor(input), meta
 

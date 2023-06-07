@@ -6,7 +6,7 @@ import numpy as np
 class SegLoss(nn.Module):
     def __init__(self, class_weights, classes):
         super().__init__()
-        weights = torch.ones(len(classes))
+        weights = torch.ones(len(classes)+1)
         indices = self.find_indices(list(class_weights.keys()), classes)
         weights[indices] = torch.FloatTensor(list(class_weights.values()))
         self.criterion = nn.CrossEntropyLoss(weight=weights)

@@ -4,6 +4,7 @@ import os
 import numpy as np
 import torch
 from pycocotools.coco import COCO
+import pycocotools.mask as mask_utils
 from torch.utils.data import Dataset
 from tqdm import tqdm
 import cv2
@@ -63,7 +64,7 @@ class COCOSegmentationDataset(Dataset):
         self.data_classes = tuple([c["name"] for c in self.cats])
         self.data_class_ids = tuple([c["id"] for c in self.cats])
         self.cls_mapping = [None] * len(classes)
-        img_ids = self.coco.getImgIds()
+        img_ids = self.coco.getImgIds()        
         for i, c in enumerate(classes):
             self.cls_mapping[i] = self.data_class_ids[
                 self.data_classes.index(c)
@@ -75,7 +76,8 @@ class COCOSegmentationDataset(Dataset):
             height = im_ann["height"]
             anno_ids = self.coco.getAnnIds(imgIds=[int(id_)], iscrowd=False)
             annotations = self.coco.loadAnns(anno_ids)
-            seg_label = np.zeros((height, width))
+
+            seg_label = np.full((height, width), len(classes))
             for obj in annotations:
                 cls_index = self.data_class_ids.index(obj["category_id"])
                 cls = self.data_classes[cls_index]
@@ -83,7 +85,6 @@ class COCOSegmentationDataset(Dataset):
                     continue
 
                 mask = self.coco.annToMask(obj)
-        
                 loc = mask == 1
                 seg_label[loc] = cls_index
 
@@ -112,7 +113,7 @@ class COCOSegmentationDataset(Dataset):
     def segmask_resize(self, label):
         label = cv2.resize(label, self.img_size, interpolation=cv2.INTER_NEAREST)
         return label
-
+    
     def __len__(self):
         return len(self.img_files)
 

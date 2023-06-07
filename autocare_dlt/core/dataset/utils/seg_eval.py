@@ -5,7 +5,7 @@ from sklearn.metrics import confusion_matrix
 
 
 def seg_evaluation(output, target, classes, loss_manager):
-    conf_sum = np.zeros((len(classes), len(classes)))
+    conf_sum = np.zeros((len(classes)+1, len(classes)+1))
     cor, tot = 0, 0
     loss_sum = []
     for batch_idx, batched_data in enumerate(output):
@@ -28,7 +28,7 @@ def seg_evaluation(output, target, classes, loss_manager):
             for i in range(conf.shape[0]):
                 for j in range(conf.shape[1]):
                     conf_sum[int(conf_indices[i].item()), int(conf_indices[j].item())] += conf[i][j]
-        
+
         # for calculate validation loss on CUDA
         batched_data = [x.cuda() for x in batched_data]
         loss, _ = loss_manager(batched_data, labels_for_loss)
