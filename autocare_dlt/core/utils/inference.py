@@ -314,39 +314,8 @@ class SegPostProcess:
         xy = [xy.tolist()]
         
         return xy
-        
-        # output = nms(
-        #     input, self.detections_per_img, self.nms_thresh, self.min_score
-        # )
-        # for ot, mt in zip(output, meta):
-        #     r_h, r_w = mt["ratio"]
-        #     pad_w, pad_h = mt["pad"]
-        #     bboxes = ot["boxes"]
-        #     if len(bboxes) > 0:
-        #         bboxes[:, 0::2] = (
-        #             (bboxes[:, 0::2] * self.input_size[0]) - pad_w
-        #         ) / r_w
-        #         bboxes[:, 1::2] = (
-        #             (bboxes[:, 1::2] * self.input_size[1]) - pad_h
-        #         ) / r_h
-        #         if len(bboxes[0]) == 4:
-        #             bboxes = xyxy2xywh(bboxes).numpy()
-        #         else:
-        #             bboxes = bboxes.numpy()
-        #         # preprocessing: resize
-        #         labels = ot["labels"].numpy()
-        #         scores = ot["scores"].numpy()
 
-        #         for ind in range(bboxes.shape[0]):
-        #             pred_data = {
-        #                 "category_id": int(labels[ind]) + 1,
-        #                 "bbox": np.maximum(bboxes[ind], 0).tolist(),
-        #                 "score": float(scores[ind]),
-        #                 "area": float(bboxes[ind][2] * bboxes[ind][3]),
-        #                 "iscrowd": 0,
-        #             }  # COCO json format
-        #             data_list.append(pred_data)
-        
+
 
 class LetterBoxPreprocess:
     def __init__(self, input_size):
@@ -366,25 +335,18 @@ class LetterBoxPreprocess:
 class SimplePreprocess:
     def __init__(self, input_size):
         self.input_size = input_size
-        self.resize = True
-
         if len(self.input_size) > 1:
             self.w, self.h = self.input_size[0], self.input_size[1]
-        elif len(self.input_size) == 1:
+        else:
             self.w, self.h = self.input_size[0], self.input_size[0]
-        else: 
-            self.resize = False
-    
+
     def __call__(self, input):
         h0, w0 = input.shape[:2]
-        if self.resize:
-            ratio = (self.h / h0, self.w / w0)
-            input = cv2.resize(
-                input, (self.w, self.h), interpolation=cv2.INTER_AREA
-            )
-        else:
-            ratio = (1, 1)
-        
+
+        ratio = (self.h / h0, self.w / w0)
+        input = cv2.resize(
+            input, (self.w, self.h), interpolation=cv2.INTER_AREA
+        )
         meta = {"ratio": ratio, "pad": (0, 0), "ori_shape": (h0, w0)}
         return img2tensor(input), meta
 
