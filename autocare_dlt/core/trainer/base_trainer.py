@@ -85,7 +85,7 @@ class BaseTrainer:
         logger.add(os.path.join(self.output_path, f"{cfg.exp_name}.log"))
 
         # log path
-        log_path = os.path.join(self.output_path, cfg.exp_name, "tensorboard")
+        log_path = os.path.join(self.output_path, "tensorboard")
         self.tblogger = SummaryWriter(log_path)
 
     def _get_dataloader(self):
