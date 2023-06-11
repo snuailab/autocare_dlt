@@ -10,7 +10,7 @@ classifier_list = ["Classifier"]
 regressor_list = ["Regressor"]
 str_list = ["TextRecognition", "LicencePlateRecognition"]
 pose_estimator_list = ["PoseEstimation"]
-
+segmenter_list = ["Segmenter"]
 
 def str2bool(v):
     if isinstance(v, bool):

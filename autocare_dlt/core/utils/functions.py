@@ -79,6 +79,16 @@ def key_labels_to_cuda(labels):
             # l['joints'] = l['joints'].cuda()
 
 
+def seg_labels_to_cuda(labels, gpu_id=-1):
+    for l in labels:
+        if l["labels"] is not None:
+            l["labels"] = (
+                l["labels"].cuda()
+                if gpu_id == -1
+                else l["labels"].cuda(gpu_id)
+            )
+
+
 class AverageMeter:
     """Computes and stores the average and current value"""
 

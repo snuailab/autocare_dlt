@@ -7,6 +7,7 @@ from autocare_dlt.core.model.detector import *
 from autocare_dlt.core.model.pose_estimation import *
 from autocare_dlt.core.model.regressor import *
 from autocare_dlt.core.model.text_recognition import *
+from autocare_dlt.core.model.segmenter import *
 from autocare_dlt.core.utils.checkpoint import load_ckpt
 from autocare_dlt.utils.config import *
 

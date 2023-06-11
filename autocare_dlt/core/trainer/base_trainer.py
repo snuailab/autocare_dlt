@@ -11,6 +11,7 @@ from autocare_dlt.core.loss.loss_manager import (
     DetLossManager,
     PoseLossManager,
     STRLossManager,
+    SegLossManager
 )
 from autocare_dlt.core.model.classifier import *
 from autocare_dlt.core.model.detector import *
@@ -31,6 +32,7 @@ from autocare_dlt.utils.config import (
     regressor_list,
     save_cfg,
     str_list,
+    segmenter_list
 )
 
 
@@ -194,6 +196,8 @@ class BaseTrainer:
             self.loss_manager = STRLossManager(loss_cfg)
         elif self.cfg.get("task") in pose_estimator_list:
             self.loss_manager = PoseLossManager(loss_cfg, device=device)
+        elif self.cfg.get("task") in segmenter_list:
+            self.loss_manager = SegLossManager(loss_cfg, self.cfg.get("classes", None), device=device)
 
     def update_lr(self, iter):
         if self.lr_scheduler is not None:
@@ -216,7 +220,6 @@ class BaseTrainer:
         for self.epoch in range(self.start_epoch, self.max_epoch):
             self.loss_aver = AverageMeter()
             self.acc_aver = AverageMeter()
-
             self.before_epoch()
             self.run_epoch()
             self.after_epoch()

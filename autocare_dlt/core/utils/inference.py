@@ -14,6 +14,7 @@ from autocare_dlt.utils.config import (
     pose_estimator_list,
     regressor_list,
     str_list,
+    segmenter_list
 )
 
 
@@ -89,6 +90,8 @@ class Inferece:
             return STRPostProcess(cfg)
         elif task in pose_estimator_list:
             return PosePostProcess(cfg)
+        elif task in segmenter_list:
+            return SegPostProcess(cfg)
         else:
             raise ValueError(f"cfg.task: {task} is unsupported task.")
 
@@ -280,6 +283,38 @@ class PosePostProcess:
         )
 
         return resized_keypoints.tolist()
+
+
+class SegPostProcess:
+    def __init__(self, cfg):
+        self.n_classes = len(list(cfg.classes))
+
+    def __call__(self, input, meta):
+        data_list = []
+        for mask in input:
+            mask = mask.numpy()
+            pred = np.argmax(mask, axis=0)
+            for c in range(self.n_classes):
+                loc = 1*(pred == c)
+                pixels = self.mask2piexls(loc)
+                pred_data = {
+                    "segmentation": pixels,
+                    "category_id": int(c)+1
+                }
+                data_list.append(pred_data)
+        
+        return data_list
+
+    def mask2piexls(self, mask):
+        (x, y) = np.where(mask == 1)
+        x = np.expand_dims(x, axis=1)
+        y = np.expand_dims(y, axis=1)
+        xy = np.concatenate([x, y], axis=1)
+        xy = np.reshape(xy, -1)
+        xy = [xy.tolist()]
+        
+        return xy
+
 
 
 class LetterBoxPreprocess:

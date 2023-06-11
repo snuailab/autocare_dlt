@@ -15,3 +15,4 @@ from .functions import (
 from .regression_eval import reg_eval
 from .text_recognition_eval import decoder, str_eval
 from .transforms import ImageAugmentation
+from .seg_eval import seg_evaluation

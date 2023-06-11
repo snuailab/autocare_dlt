@@ -8,6 +8,7 @@ from .config import (
     pose_estimator_list,
     regressor_list,
     str_list,
+    segmenter_list
 )
 
 
@@ -32,6 +33,8 @@ class DrawResults:
             img = self.draw_pose(img, results)
         elif self.task == "e2e":
             img = self.draw_detection(img, results)
+        elif self.task in segmenter_list:
+            img = self.draw_segmentation(img, results)
         else:
             raise NameError(
                 f"The task '{self.task}' is not defined in the model."
@@ -144,6 +147,21 @@ class DrawResults:
 
         return keypoints_with_img.astype(np.uint8)
 
+    def draw_segmentation(self, img, results):
+        cmap = np.zeros((img.shape[0], img.shape[1], 3))
+        for res in results:
+            cls= res["category_id"]
+            color = self.colors[cls-1]
+            masks = res["segmentation"]
+            for mask in masks:
+                mask = np.array(mask)
+                mask = mask.reshape(-1, 2)
+                cmap[mask[:, 0], mask[:, 1]]=color
+
+        img = cv2.addWeighted(img.astype("float64"), 0.5, cmap, 0.5, 0)
+        
+        return img
+    
     def _get_colors(self):
         num_classes = len(self.classes)
         self.colors = np.random.randint(255, size=(num_classes, 3))
@@ -172,3 +190,20 @@ def putText(img, text, org, font_path, color=(0, 0, 255), font_size=20):
     )
     img = np.array(img_pil)
     return img
+
+# TODO: remove
+import matplotlib.pyplot as plt
+
+def log_graph(train_log, val_log, marker, save_path):
+    x = np.arange(len(train_log))
+
+    plt.clf()
+    plt.title("Loss history")
+    plt.xlabel('Epoch')
+    plt.ylabel(marker)
+    plt.title(f"{marker} history")
+
+    plt.plot(x, train_log, 'b', label='train')
+    plt.plot(x, val_log, 'r', label='val')
+    plt.legend()
+    plt.savefig('{}/{}.png'.format(save_path, marker))
