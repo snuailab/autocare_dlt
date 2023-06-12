@@ -128,8 +128,11 @@ class COCOSegmentationDataset(Dataset):
         labels = self.labels[index]
         labels = self.segmask_resize(labels)
 
+        # Converting Background Channels for Use with Albumentation
+        labels = np.where(labels == len(self.classes), 0, labels+1)
         img, labels = self.transform.transform(img, labels)
-        
+        labels = torch.where(labels == 0, torch.tensor(len(self.classes)), labels - 1)
+
         img = img2tensor(img)
 
         outs = {
