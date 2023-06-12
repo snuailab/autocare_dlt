@@ -14,6 +14,8 @@ class ImageAugmentation:
         for aug_name, aug_cfg in img_augs.items():
             if aug_name == "MixUp":
                 continue
+            if aug_name == "Pad":
+                continue
             if aug_name == "ImageNormalization":
                 self.augs.append(self.get_normalize(**aug_cfg))
                 continue

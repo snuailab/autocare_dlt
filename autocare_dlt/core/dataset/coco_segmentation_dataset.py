@@ -49,6 +49,10 @@ class COCOSegmentationDataset(Dataset):
             "augmentation", {"ImageNormalization": {"type": "base"}}
         )
 
+        pad = augmentations.get("Pad", False)
+        if pad:
+            self.pad = pad.get("ratio", 0.0)
+
         self.transform = ImageAugmentation(augmentations, mode="segmentation")
 
     def data_statistics(self, path):
@@ -122,11 +126,15 @@ class COCOSegmentationDataset(Dataset):
         # Load image
         img, (h0, w0), (h, w) = self.load_image(index)
 
-        pad = (0, 0)
-
         # Load & transform labels
         labels = self.labels[index]
         labels = self.segmask_resize(labels)
+
+        # Padding
+        pad = (int(h*self.pad), int(h*self.pad), int(w*self.pad), int(w*self.pad))
+
+        img = np.pad(img, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad)), (0, 0)), "constant", constant_values=0)
+        labels = np.pad(labels, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad))), "constant", constant_values=len(self.classes))
 
         # Converting Background Channels for Use with Albumentation
         labels = np.where(labels == len(self.classes), 0, labels+1)
@@ -134,7 +142,7 @@ class COCOSegmentationDataset(Dataset):
         labels = torch.where(labels == 0, torch.tensor(len(self.classes)), labels - 1)
 
         img = img2tensor(img)
-
+   
         outs = {
             "labels": labels,  # (n, 1)
             "ori_shape": (h0, w0),
