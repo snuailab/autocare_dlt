@@ -49,9 +49,9 @@ class COCOSegmentationDataset(Dataset):
             "augmentation", {"ImageNormalization": {"type": "base"}}
         )
 
-        pad = augmentations.get("Pad", False)
-        if pad:
-            self.pad = pad.get("ratio", 0.0)
+        self.pad = augmentations.get("Pad", False)
+        if self.pad:
+            self.pad = self.pad.get("ratio", 0.0)
 
         self.transform = ImageAugmentation(augmentations, mode="segmentation")
 
@@ -131,10 +131,10 @@ class COCOSegmentationDataset(Dataset):
         labels = self.segmask_resize(labels)
 
         # Padding
-        pad = (int(h*self.pad), int(h*self.pad), int(w*self.pad), int(w*self.pad))
-
-        img = np.pad(img, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad)), (0, 0)), "constant", constant_values=0)
-        labels = np.pad(labels, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad))), "constant", constant_values=len(self.classes))
+        pad = (0, 0)
+        if self.pad:
+            img = np.pad(img, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad)), (0, 0)), "constant", constant_values=0)
+            labels = np.pad(labels, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad))), "constant", constant_values=len(self.classes))
 
         # Converting Background Channels for Use with Albumentation
         labels = np.where(labels == len(self.classes), 0, labels+1)
