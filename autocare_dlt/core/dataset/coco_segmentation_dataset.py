@@ -1,18 +1,13 @@
-import copy
 import os
 
 import numpy as np
 import torch
 from pycocotools.coco import COCO
-import pycocotools.mask as mask_utils
 from torch.utils.data import Dataset
-from tqdm import tqdm
 import cv2
-from shapely import Polygon, Point
 from scipy.ndimage import binary_dilation
 
 from autocare_dlt.core.dataset.utils import *
-import time
 
 class COCOSegmentationDataset(Dataset):
     def __init__(self, cfg, task_cfg):
@@ -41,7 +36,18 @@ class COCOSegmentationDataset(Dataset):
 
         # RGB to gray scale
         self.gray = cfg.get("gray", False)
+
+        # mask expansion
+        # TODO: remove cfg hierarchy
         self.mask_expansion = cfg.get("mask_expansion", False)
+        if self.mask_expansion:
+            self.mask_expansion_iteration = self.mask_expansion.get("iteration", 0)
+            self.mask_expansion_structure = self.mask_expansion.get("structure", False)
+            if self.mask_expansion_structure is not False:
+                self.mask_expansion_structure = self.make_kernel(self.mask_expansion_structure)
+                self.mask_expansion_structure = self.mask_expansion_structure == 1
+            
+
         # Get labels
         labels, shapes = self.load_annotations(self.classes)
 
@@ -94,10 +100,17 @@ class COCOSegmentationDataset(Dataset):
                     continue
                 
                 mask = self.coco.annToMask(obj)
+
+                # TODO: remove hierarchy
                 if self.mask_expansion:
-                    mask = binary_dilation(mask, iterations=self.mask_expansion)
+                    if self.mask_expansion_structure is not False:
+                        mask = binary_dilation(mask, structure=self.mask_expansion_structure, iterations=self.mask_expansion_iteration)
+                    else:
+                        mask = binary_dilation(mask, iterations=self.mask_expansion_iteration)
+
                 loc = mask == 1
                 seg_label[loc] = cls_index
+      
 
             if len(np.unique(seg_label)) == 1:
                 continue
@@ -164,3 +177,8 @@ class COCOSegmentationDataset(Dataset):
 
         return img, outs
     
+    def make_kernel(self, points):
+        A = np.zeros((3, 3), dtype=int)
+        A[np.array(points).T.tolist()] = 1
+        
+        return A
