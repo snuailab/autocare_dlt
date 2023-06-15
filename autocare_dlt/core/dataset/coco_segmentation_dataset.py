@@ -45,9 +45,7 @@ class COCOSegmentationDataset(Dataset):
             self.mask_expansion_structure = self.mask_expansion.get("structure", False)
             if self.mask_expansion_structure is not False:
                 self.mask_expansion_structure = self.make_kernel(self.mask_expansion_structure)
-                self.mask_expansion_structure = self.mask_expansion_structure == 1
             
-
         # Get labels
         labels, shapes = self.load_annotations(self.classes)
 
@@ -101,7 +99,6 @@ class COCOSegmentationDataset(Dataset):
                 
                 mask = self.coco.annToMask(obj)
 
-                # TODO: remove hierarchy
                 if self.mask_expansion:
                     if self.mask_expansion_structure is not False:
                         mask = binary_dilation(mask, structure=self.mask_expansion_structure, iterations=self.mask_expansion_iteration)
@@ -178,7 +175,7 @@ class COCOSegmentationDataset(Dataset):
         return img, outs
     
     def make_kernel(self, points):
-        A = np.zeros((3, 3), dtype=int)
-        A[np.array(points).T.tolist()] = 1
-        
+        A = np.zeros((3, 3), dtype=bool)
+        A[np.array(points)] = True
+
         return A
