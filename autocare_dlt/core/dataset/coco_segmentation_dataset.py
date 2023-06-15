@@ -8,9 +8,11 @@ import pycocotools.mask as mask_utils
 from torch.utils.data import Dataset
 from tqdm import tqdm
 import cv2
+from shapely import Polygon, Point
+from scipy.ndimage import binary_dilation
 
 from autocare_dlt.core.dataset.utils import *
-
+import time
 
 class COCOSegmentationDataset(Dataset):
     def __init__(self, cfg, task_cfg):
@@ -39,7 +41,7 @@ class COCOSegmentationDataset(Dataset):
 
         # RGB to gray scale
         self.gray = cfg.get("gray", False)
-
+        self.mask_expansion = cfg.get("mask_expansion", False)
         # Get labels
         labels, shapes = self.load_annotations(self.classes)
 
@@ -90,8 +92,10 @@ class COCOSegmentationDataset(Dataset):
                 cls = self.data_classes[cls_index]
                 if cls not in classes:
                     continue
-
+                
                 mask = self.coco.annToMask(obj)
+                if self.mask_expansion:
+                    mask = binary_dilation(mask, iterations=self.mask_expansion)
                 loc = mask == 1
                 seg_label[loc] = cls_index
 
@@ -159,3 +163,4 @@ class COCOSegmentationDataset(Dataset):
         }
 
         return img, outs
+    
