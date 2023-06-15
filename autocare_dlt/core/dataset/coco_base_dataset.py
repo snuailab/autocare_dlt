@@ -66,7 +66,7 @@ class COCOBaseDataset:
 
         # load annotations
         self.load_annotations()
-
+        
     def load_annotations(self):
         pass
 

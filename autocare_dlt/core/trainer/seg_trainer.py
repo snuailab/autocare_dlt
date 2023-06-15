@@ -34,6 +34,7 @@ class SegmentationTrainer(BaseTrainer):
             self.best_loss = 10000000000        
             self.train_loss_history = []
             self.val_loss_history = []
+            self.gray = cfg["data"].get("gray", False)
 
     def _get_dataloader(self):
         data_cfg = self.cfg.data
@@ -316,8 +317,10 @@ class SegmentationTrainer(BaseTrainer):
                 cmap = cmap + cmap_temp
 
             sample_image = 255*sample_image.cpu().numpy().transpose(1, 2, 0)
+            if self.gray:
+                sample_image = np.concatenate((sample_image, sample_image, sample_image), axis=2)
 
-            import cv2
+            import cv2 
             visual_sample = cv2.addWeighted(sample_image.astype(np.float64), 0.5, cmap, 0.5, 0)
             cv2.imwrite(f"{self.output_path}/training_sample.png", visual_sample)
 

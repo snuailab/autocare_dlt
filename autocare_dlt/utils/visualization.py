@@ -156,8 +156,12 @@ class DrawResults:
             for mask in masks:
                 mask = np.array(mask)
                 mask = mask.reshape(-1, 2)
-                cmap[mask[:, 0], mask[:, 1]]=color
+                if mask.shape[0] > 0:
+                    cmap[mask[:, 0], mask[:, 1]]=color
 
+        if len(img.shape) == 2:
+            img = np.expand_dims(img, axis=2)
+            img = np.concatenate([img, img, img], axis=2)
         img = cv2.addWeighted(img.astype("float64"), 0.5, cmap, 0.5, 0)
         
         return img

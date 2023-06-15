@@ -37,6 +37,9 @@ class COCOSegmentationDataset(Dataset):
 
         self.classes = cfg.get("classes")
 
+        # RGB to gray scale
+        self.gray = cfg.get("gray", False)
+
         # Get labels
         labels, shapes = self.load_annotations(self.classes)
 
@@ -141,8 +144,13 @@ class COCOSegmentationDataset(Dataset):
         img, labels = self.transform.transform(img, labels)
         labels = torch.where(labels == 0, torch.tensor(len(self.classes)), labels - 1)
 
-        img = img2tensor(img)
-   
+        if self.gray:
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+            img = np.expand_dims(img, axis=0)
+            img = torch.from_numpy(img)
+        else:
+            img = img2tensor(img)
+
         outs = {
             "labels": labels,  # (n, 1)
             "ori_shape": (h0, w0),
