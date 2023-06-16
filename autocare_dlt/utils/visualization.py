@@ -147,6 +147,7 @@ class DrawResults:
 
         return keypoints_with_img.astype(np.uint8)
 
+    # TODO: add with resized image
     def draw_segmentation(self, img, results):
         cmap = np.zeros((img.shape[0], img.shape[1], 3))
         for res in results:

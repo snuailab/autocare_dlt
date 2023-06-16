@@ -352,9 +352,13 @@ class SimplePreprocess:
 
 
 def img2tensor(img):
-    img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, HWC to CHW
+    if len(img.shape)==3:
+        img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, HWC to CHW
+    else:
+        img = np.expand_dims(img, axis=0)
     img = np.ascontiguousarray(img)
     img = torch.from_numpy(img).unsqueeze(0) / 255
+    
     if torch.cuda.is_available():
         img = img.cuda()
     return img

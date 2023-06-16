@@ -103,6 +103,13 @@ def make_parser():
         type=str2bool,
         help="overwrite former results",
     )
+    parser.add_argument(
+        "--gray",
+        default=False,
+        type=str2bool,
+        help="gray scale",
+    )
+
     return parser
 
 
@@ -119,6 +126,7 @@ def run(
     save_video: bool = False,
     root_dir: str = "",
     overwrite: bool = False,
+    gray: bool = False
 ) -> None:
     """Run inference
 
@@ -149,6 +157,7 @@ def run(
             "save_imgs": save_imgs,
             "save_video": save_video,
             "overwrite": overwrite,
+            "gray": gray
         }
     )
 
@@ -220,6 +229,10 @@ def run(
         for idx, (img_id, img_path) in enumerate(zip(img_ids, pbar)):
             img = cv2.imread(img_path)
             h, w, _ = img.shape
+            
+            if cfg.gray:
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
             img_name = (
                 img_paths[idx] if img_paths else os.path.split(img_path)[-1]
             )

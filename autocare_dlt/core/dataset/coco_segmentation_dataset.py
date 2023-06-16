@@ -37,15 +37,6 @@ class COCOSegmentationDataset(Dataset):
         # RGB to gray scale
         self.gray = cfg.get("gray", False)
 
-        # mask expansion
-        # TODO: remove cfg hierarchy
-        self.mask_expansion = cfg.get("mask_expansion", False)
-        if self.mask_expansion:
-            self.mask_expansion_iteration = self.mask_expansion.get("iteration", 0)
-            self.mask_expansion_structure = self.mask_expansion.get("structure", False)
-            if self.mask_expansion_structure is not False:
-                self.mask_expansion_structure = self.make_kernel(self.mask_expansion_structure)
-            
         # Get labels
         labels, shapes = self.load_annotations(self.classes)
 
@@ -98,12 +89,6 @@ class COCOSegmentationDataset(Dataset):
                     continue
                 
                 mask = self.coco.annToMask(obj)
-
-                if self.mask_expansion:
-                    if self.mask_expansion_structure is not False:
-                        mask = binary_dilation(mask, structure=self.mask_expansion_structure, iterations=self.mask_expansion_iteration)
-                    else:
-                        mask = binary_dilation(mask, iterations=self.mask_expansion_iteration)
 
                 loc = mask == 1
                 seg_label[loc] = cls_index
@@ -173,9 +158,3 @@ class COCOSegmentationDataset(Dataset):
         }
 
         return img, outs
-    
-    def make_kernel(self, points):
-        A = np.zeros((3, 3), dtype=bool)
-        A[np.array(points)] = True
-
-        return A
