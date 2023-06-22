@@ -37,6 +37,9 @@ class COCOSegmentationDataset(Dataset):
         # RGB to gray scale
         self.gray = cfg.get("gray", False)
 
+        # project specific mask
+        self.all_point = cfg.get("all_point", False)
+
         # Get labels
         labels, shapes = self.load_annotations(self.classes)
 
@@ -88,12 +91,14 @@ class COCOSegmentationDataset(Dataset):
                 if cls not in classes:
                     continue
                 
-                mask = self.coco.annToMask(obj)
+                if self.all_point:
+                    mask = self.all_point_mask(obj, height, width)
+                else:
+                    mask = self.coco.annToMask(obj)
 
                 loc = mask == 1
                 seg_label[loc] = cls_index
       
-
             if len(np.unique(seg_label)) == 1:
                 continue
 
@@ -158,3 +163,15 @@ class COCOSegmentationDataset(Dataset):
         }
 
         return img, outs
+    
+    def all_point_mask(self, obj, height, width):
+        for seg in obj["segmentation"]:
+            seg = np.array(seg, dtype=np.int32)
+            seg = np.reshape(seg, (-1, 2))
+            x_ = seg[:, 0]
+            y_ = seg[:, 1]
+            mask = np.zeros((height, width))
+            mask[y_, x_] = 1
+        
+        return mask
+ 
