@@ -22,12 +22,8 @@ def seg_evaluation(output, target, classes, loss_manager):
             label = label.reshape(-1)
             cor += torch.sum(pred==label).item()
             tot += len(label)
-            conf = confusion_matrix(label, pred)
-
-            conf_indices = torch.unique(torch.cat([pred, label]))
-            for i in range(conf.shape[0]):
-                for j in range(conf.shape[1]):
-                    conf_sum[int(conf_indices[i].item()), int(conf_indices[j].item())] += conf[i][j]
+            conf = confusion_matrix(label, pred, labels=np.arange(len(classes)+1))
+            conf_sum+=conf
 
         # for calculate validation loss on CUDA
         batched_data = [x.cuda() for x in batched_data]
