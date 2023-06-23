@@ -36,6 +36,12 @@ def make_parser():
         help="input size of model",
     )
     parser.add_argument(
+        "--input_channels",
+        default=3,
+        type=int,
+        help="input channels of model",
+    )
+    parser.add_argument(
         "-o", "--opset", default=11, type=int, help="onnx opset version"
     )
     parser.add_argument(
@@ -53,6 +59,7 @@ def run(
     model_cfg: str,
     ckpt: Union[str, dict],
     input_size: list = None,
+    input_channels: int = 3,
     opset: int = 11,
     no_onnxsim: bool = False,
 ) -> None:
@@ -73,6 +80,7 @@ def run(
             "output_name": output_name,
             "model_cfg": model_cfg,
             "input_size": input_size,
+            "input_channelse": input_channels,
             "ckpt": ckpt,
             "opset": opset,
             "no_onnxsim": no_onnxsim,
@@ -108,17 +116,22 @@ def run(
     if cfg["task"] in detector_list:
         outputs_list = ["bbox", "conf", "class_id"]
         dummy_input = torch.randn(
-            dynamic_batch, 3, input_size[1], input_size[0]
+            dynamic_batch, input_channels, input_size[1], input_size[0]
         )
     elif cfg["task"] in classifier_list + str_list:
         outputs_list = ["predictions"]
         dummy_input = torch.randn(
-            dynamic_batch, 3, input_size[1], input_size[0]
+            dynamic_batch, input_channels, input_size[1], input_size[0]
         )
     elif cfg["task"] in pose_estimator_list:
         outputs_list = ["keypoints"]
         dummy_input = torch.randn(
-            dynamic_batch, 3, input_size[1], input_size[0]
+            dynamic_batch, input_channels, input_size[1], input_size[0]
+        )
+    elif cfg["task"] in segmenter_list:
+        outputs_list = ["keypoints"]
+        dummy_input = torch.randn(
+            dynamic_batch, input_channels, input_size[1], input_size[0]
         )
 
     torch.onnx.export(

@@ -37,15 +37,9 @@ class COCOSegmentationDataset(Dataset):
         # RGB to gray scale
         self.gray = cfg.get("gray", False)
 
-        # mask expansion
-        # TODO: remove cfg hierarchy
-        self.mask_expansion = cfg.get("mask_expansion", False)
-        if self.mask_expansion:
-            self.mask_expansion_iteration = self.mask_expansion.get("iteration", 0)
-            self.mask_expansion_structure = self.mask_expansion.get("structure", False)
-            if self.mask_expansion_structure is not False:
-                self.mask_expansion_structure = self.make_kernel(self.mask_expansion_structure)
-            
+        # project specific mask
+        self.all_point = cfg.get("all_point", False)
+
         # Get labels
         labels, shapes = self.load_annotations(self.classes)
 
@@ -97,18 +91,14 @@ class COCOSegmentationDataset(Dataset):
                 if cls not in classes:
                     continue
                 
-                mask = self.coco.annToMask(obj)
-
-                if self.mask_expansion:
-                    if self.mask_expansion_structure is not False:
-                        mask = binary_dilation(mask, structure=self.mask_expansion_structure, iterations=self.mask_expansion_iteration)
-                    else:
-                        mask = binary_dilation(mask, iterations=self.mask_expansion_iteration)
+                if self.all_point:
+                    mask = self.all_point_mask(obj, height, width)
+                else:
+                    mask = self.coco.annToMask(obj)
 
                 loc = mask == 1
                 seg_label[loc] = cls_index
       
-
             if len(np.unique(seg_label)) == 1:
                 continue
 
@@ -174,8 +164,14 @@ class COCOSegmentationDataset(Dataset):
 
         return img, outs
     
-    def make_kernel(self, points):
-        A = np.zeros((3, 3), dtype=bool)
-        A[np.array(points)] = True
-
-        return A
+    def all_point_mask(self, obj, height, width):
+        for seg in obj["segmentation"]:
+            seg = np.array(seg, dtype=np.int32)
+            seg = np.reshape(seg, (-1, 2))
+            x_ = seg[:, 0]
+            y_ = seg[:, 1]
+            mask = np.zeros((height, width))
+            mask[y_, x_] = 1
+        
+        return mask
+ 
