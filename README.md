@@ -45,14 +45,10 @@ pip install autocare_dlt
     - workers_per_gpu (int) : dataloader work 갯수
     - batch_size_per_gpu (int): GPU당 batch size
     - img_size (int): 모델의 image size (img_size, img_size) → 추후 업데이트 예정
-    - train, val, test, unlabeled (dict): 각 dataset의 config
+    - train, val, test (dict): 각 dataset의 config
         - type: dataset의 type
         - data_root: data의 root path
         - ann: annotation 파일의 path
-        - input_paths (unlabeled data only): unlabled data 파일 리스트
-            - dir path : "data_root: ''" 로 맞추어 사용 할것
-            - *.txt
-            - *.json(coco형식)
         - augmentation: data augmentation세팅
             - CV2 모듈들이 먼저 적용되고 pytorch(torchvision) 모듈 적용됨
             - top down 순서대로 적용
