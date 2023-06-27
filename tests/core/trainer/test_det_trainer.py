@@ -6,52 +6,50 @@ import unittest
 from box import Box
 
 from autocare_dlt.core.trainer import DetectionTrainer
-from autocare_dlt.utils.config import json_to_dict
+from autocare_dlt.core.dataset import build_datasets
+from autocare_dlt.core.model import build_model
+from autocare_dlt.utils.config import parsing_config
+
 
 
 class TestDetectionTrainer(unittest.TestCase):
     def setUp(self):
-        self.model_cfg = (
-            "tests/assets/detection/configs/retinanet_resnet18.json"
-        )
-        self.data_cfg = "tests/assets/detection/configs/coco_small.json"
-        self.dummy_cfg = {}
-        self.dummy_cfg.update(json_to_dict(self.model_cfg))
-        self.dummy_cfg.update(json_to_dict(self.data_cfg))
-        self.dummy_cfg.update(
+        args = Box(
             {
+                "output_dir": "tests/outputs",
                 "exp_name": "test_base_trainer",
-                "ema": False,
-                "ema_cfg": None,
+                "model_cfg":  "tests/assets/detection/configs/retinanet_resnet18.json",
+                "data_cfg": "tests/assets/detection/configs/coco_small.json",
+                "gpus": "0",
                 "num_gpus": 1,
-                "resume": False,
+                "world_size": 1,
                 "ckpt": None,
-                "fp16": False,
+                "resume": False,
+                "ema": False,
+                "overwrite": True,
             }
         )
-        self.dummy_cfg = Box(self.dummy_cfg)
+
+        self.dummy_cfg = parsing_config(args)
+
+        self.model, _ = build_model(self.dummy_cfg)
+        self.datasets = build_datasets(self.dummy_cfg.data)
 
     def tearDown(self):
-        shutil.rmtree(self.trainer.log_path)
         shutil.rmtree(self.trainer.output_path)
         del self.trainer
 
     def test_build_trainer(self):
 
-        self.trainer = DetectionTrainer(self.dummy_cfg)
-        self.assertTrue(os.path.exists(self.trainer.log_path))
+        self.trainer = DetectionTrainer(self.model, self.datasets, self.dummy_cfg)
         self.assertTrue(os.path.exists(self.trainer.output_path))
-        self.assertEqual(
-            self.trainer.cfg["model"]["head"]["num_classes"],
-            self.dummy_cfg.num_classes,
-        )
         with self.assertRaises(ValueError):
             cfg = copy.deepcopy(self.dummy_cfg)
             cfg.pop("optim")
-            trainer = DetectionTrainer(cfg)
+            trainer = DetectionTrainer(self.model, self.datasets, cfg)
 
     def test_run_trainer(self):
-        self.trainer = DetectionTrainer(self.dummy_cfg)
+        self.trainer = DetectionTrainer(self.model, self.datasets, self.dummy_cfg)
         ckpt_path = os.path.join(self.trainer.output_path, "best_ckpt.pth")
         self.assertFalse(os.path.exists(ckpt_path))
         self.trainer.train()

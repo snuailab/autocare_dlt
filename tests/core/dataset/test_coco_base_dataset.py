@@ -14,14 +14,14 @@ class TestCOCOBaseDataset(unittest.TestCase):
             {
                 "task": "Classifier",
                 "img_size": self.img_size,
-                "classes": {"animal": ["dog", "cat"]},
+                "classes": ["dog", "cat"],
             }
         )
         self.fail_cfg = Box(
             {
                 "task": "Classifier",
                 "img_size": 224,
-                "classes": {"animal": ["dog", "cat"]},
+                "classes": ["dog", "cat"],
             }
         )
         self.dummy_task_cfg = Box(

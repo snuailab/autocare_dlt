@@ -26,9 +26,6 @@ class TestRegressor(unittest.TestCase):
 
     def test_create_classifier(self):
 
-        with self.assertRaises(TypeError):
-            Model(model_cfg=self.model_cfg)
-
         model = Model(model_cfg=self.model_cfg)
 
         self.assertIsInstance(model.backbone, torch.nn.Module)
