@@ -19,7 +19,10 @@ class TestAverageMeter(unittest.TestCase):
     def test_update(self):
         avg = AverageMeter()
         size = 1
-        pseudo_tensor = torch.cuda.FloatTensor(size).fill_(2)
+        if torch.cuda.is_available():
+            pseudo_tensor = torch.cuda.FloatTensor(size).fill_(2)
+        else:
+            pseudo_tensor = torch.FloatTensor(size).fill_(2)
         out = avg.update(pseudo_tensor)
         self.assertEqual(avg.sum, 2)
         self.assertEqual(avg.count, 1)
@@ -33,7 +36,10 @@ class TestAverageMeter(unittest.TestCase):
     def test_avgl(self):
         avg = AverageMeter()
         size = 2
-        pseudo_tensor = torch.cuda.FloatTensor(size).fill_(5)
+        if torch.cuda.is_available():
+            pseudo_tensor = torch.cuda.FloatTensor(size).fill_(2)
+        else:
+            pseudo_tensor = torch.FloatTensor(size).fill_(2)
         avg.update(pseudo_tensor)
         avg.update(pseudo_tensor)
         result = avg.avg

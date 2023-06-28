@@ -3,7 +3,6 @@ import unittest
 import torch
 
 from autocare_dlt.core.model.detector import RetinaNet
-from autocare_dlt.core.utils import det_labels_to_cuda
 
 
 class TestRetinaNet(unittest.TestCase):
