@@ -106,14 +106,6 @@ def procs(rank, model, datasets, cfg, return_dict=False):
             cudnn.benchmark = True
 
     # set output_path
-    output_path = os.path.join(cfg.output_dir, cfg.exp_name)
-    cfg.output_path = output_path
-    if (
-        not cfg.get("overwrite", False)
-        and not cfg.get("resume", False)
-        and os.path.exists(output_path)
-    ):
-        raise KeyError(f"exp_name {cfg.exp_name} is already exist")
 
     if cfg.gpus != "-1" and len(cfg.gpus.split(",")) > 1:
         cfg.num_gpus = len(cfg.gpus.split(","))

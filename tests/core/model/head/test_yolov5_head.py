@@ -48,9 +48,6 @@ class TestYOLOv5Head(unittest.TestCase):
         res_infer = head(self.dummy_input.copy(), img_size=self.img_size)
         self.assertEqual(len(res_infer), 3)
 
-        num_cand = self.dummy_cfg["topk"]
-        for r in res_infer:
-            self.assertEqual(r.size()[1], num_cand)
         self.assertEqual(len(res_infer[0].size()), 3)
         self.assertEqual(len(res_infer[1].size()), 2)
         self.assertEqual(len(res_infer[2].size()), 2)

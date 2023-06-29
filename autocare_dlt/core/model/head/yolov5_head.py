@@ -9,7 +9,11 @@ class YOLOv5Head(nn.Module):
     stride = None
 
     def __init__(
-        self, model_size, num_classes, anchors=None, topk=1000
+        self, 
+        model_size, 
+        num_classes, 
+        anchors=None, 
+        topk=1000 # topk is not used
     ):  # detection layer
         super().__init__()
         if model_size not in ["n", "s", "m", "l", "x"]:
@@ -56,7 +60,7 @@ class YOLOv5Head(nn.Module):
         )  # forward
         check_anchor_order(self)  # must be in pixel-space (not grid-space)
         self.anchors /= self.stride.view(-1, 1, 1)
-        self.topk = topk
+        #self.topk = topk
 
     def get_width(self, n):
         return make_divisible(n * self.gw, 8)

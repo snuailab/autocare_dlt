@@ -60,5 +60,5 @@ class TestSSD(unittest.TestCase):
     def test_run_ssd_infer(self):
         detector = SSD(model_cfg=self.dummy_model_cfg)
         detector.eval()
-        res_infer = detector(self.dummy_img, None)
+        res_infer = detector(self.dummy_img)
         self.assertEqual(len(res_infer), 3)

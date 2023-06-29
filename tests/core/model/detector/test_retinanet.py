@@ -3,7 +3,6 @@ import unittest
 import torch
 
 from autocare_dlt.core.model.detector import RetinaNet
-from autocare_dlt.core.utils import det_labels_to_cuda
 
 
 class TestRetinaNet(unittest.TestCase):
@@ -53,5 +52,5 @@ class TestRetinaNet(unittest.TestCase):
     def test_run_RetinaNet_infer(self):
         detector = RetinaNet(model_cfg=self.dummy_model_cfg)
         detector.eval()
-        res_infer = detector(self.dummy_img, None)
+        res_infer = detector(self.dummy_img)
         self.assertEqual(len(res_infer), 3)

@@ -146,8 +146,8 @@ class COCOPoseDataset(Dataset):
                 continue
 
             # === Joint locations and their visibilities === #
-            joints_3d = np.zeros((self.num_joints, 3), dtype=np.float)
-            joints_3d_vis = np.zeros((self.num_joints, 3), dtype=np.float)
+            joints_3d = np.zeros((self.num_joints, 3))
+            joints_3d_vis = np.zeros((self.num_joints, 3))
             for ipt in range(self.num_joints):
                 joints_3d[ipt, 0] = obj["keypoints"][ipt * 3 + 0]
                 joints_3d[ipt, 1] = obj["keypoints"][ipt * 3 + 1]

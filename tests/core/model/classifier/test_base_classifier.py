@@ -23,9 +23,6 @@ class TestBaseClassifier(unittest.TestCase):
 
     def test_create_base_classifier(self):
 
-        with self.assertRaises(TypeError):
-            Model(self.model_cfg)
-
         model = Model(self.model_cfg)
 
         self.assertIsInstance(model.backbone, torch.nn.Module)
