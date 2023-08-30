@@ -5,8 +5,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class UNet(nn.Module):
-    def __init__(self, in_channels, n_classes, bilinear=True):
+    def __init__(self, in_channels, n_classes, bilinear=True, model_size="L"):
         super(UNet, self).__init__()
+        self.model_size = model_size
+        print(self.model_size)
         self.n_channels = in_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
@@ -38,7 +40,7 @@ class UNet(nn.Module):
 
         logits = self.outc(x)
         
-        return logits
+        return logits, x5
     
 class DoubleConv(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""

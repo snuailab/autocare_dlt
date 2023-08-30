@@ -33,14 +33,17 @@ class BaseSegmenter(nn.Module):
                     in_channels=in_channels, n_classes=n_classes, **backbone
                 )
             else:
-                backbone = timm.create_model(
-                    backbone_name,
-                    features_only=False,
-                    pretrained=True,
-                    in_chans=in_channels,
-                    num_classes=n_classes,
-                    **backbone
-                )
+                raise Exception(f"-{backbone}- backbone is not supported")
+            # TODO: use timm models
+            # else:
+            #     backbone = timm.create_model(
+            #         backbone_name,
+            #         features_only=False,
+            #         pretrained=True,
+            #         in_chans=in_channels,
+            #         num_classes=n_classes,
+            #         **backbone
+            #     )
 
         if neck is not None:
             neck_name = neck.pop("name", None)

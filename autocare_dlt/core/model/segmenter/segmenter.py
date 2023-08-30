@@ -6,8 +6,9 @@ class Segmenter(BaseSegmenter):
         super().__init__(**kwargs)
 
     def forward(self, x, **kwargs):
-        features = self.backbone(x)
+        # TODO: just for UNet custom. have to change for normal cases
+        logit, features = self.backbone(x)
         features = self.neck(features)
-        outputs = self.head(features, **kwargs)
+        outputs = self.head(logit, **kwargs)
 
         return outputs
