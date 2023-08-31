@@ -5,25 +5,25 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class UNet(nn.Module):
-    def __init__(self, in_channels, n_classes, bilinear=True, model_size="L"):
+    def __init__(self, in_channels, n_classes, bilinear=True, model_size="l"):
         super(UNet, self).__init__()
-        self.model_size = model_size
-        print(self.model_size)
+        channel_dict = {"n": 8, "s": 16, "m": 32, "l": 64, "x": 128}
+        cu = channel_dict[model_size] # unit size of convolutional channel
         self.n_channels = in_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
 
-        self.inc = DoubleConv(in_channels, 64)
-        self.down1 = Down(64, 128)
-        self.down2 = Down(128, 256)
-        self.down3 = Down(256, 512)
+        self.inc = DoubleConv(in_channels, cu)
+        self.down1 = Down(cu, 2*cu)
+        self.down2 = Down(2*cu, 4*cu)
+        self.down3 = Down(4*cu, 8*cu)
         factor = 2 if bilinear else 1
-        self.down4 = Down(512, 1024 // factor)
-        self.up1 = Up(1024, 512 // factor, bilinear)
-        self.up2 = Up(512, 256 // factor, bilinear)
-        self.up3 = Up(256, 128 // factor, bilinear)
-        self.up4 = Up(128, 64, bilinear)
-        self.outc = OutConv(64, n_classes+1)
+        self.down4 = Down(8*cu, 16*cu // factor)
+        self.up1 = Up(16*cu, 8*cu // factor, bilinear)
+        self.up2 = Up(8*cu, 4*cu // factor, bilinear)
+        self.up3 = Up(4*cu, 2*cu // factor, bilinear)
+        self.up4 = Up(2*cu, cu, bilinear)
+        self.outc = OutConv(cu, n_classes+1)
 
     def forward(self, x):
         x1 = self.inc(x)
