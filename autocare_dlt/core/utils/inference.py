@@ -290,31 +290,50 @@ class SegPostProcess:
         self.n_classes = len(list(cfg.classes))
 
     def __call__(self, input, meta):
-        data_list = []
+        annotations = []
         for mask in input:
             mask = mask.numpy()
             pred = np.argmax(mask, axis=0)
             for c in range(self.n_classes):
-                loc = 1*(pred == c)
-                pixels = self.mask2piexls(loc)
-                pred_data = {
-                    "segmentation": pixels,
-                    "category_id": int(c)+1
-                }
-                data_list.append(pred_data)
-        
-        return data_list
+                binary_mask = 1*(pred == c)
+                polygons = self.binary_mask_to_polygon(binary_mask)
+                for polygon in polygons:
+                    bbox, area = self.contour_to_bbox(np.array(polygon).reshape((-1, 2)))
+                    polygon = [float(x) for x in polygon]
+                    if len(polygon)<8:
+                        continue
 
-    def mask2piexls(self, mask):
-        (x, y) = np.where(mask == 1)
-        x = np.expand_dims(x, axis=1)
-        y = np.expand_dims(y, axis=1)
-        xy = np.concatenate([x, y], axis=1)
-        xy = np.reshape(xy, -1)
-        xy = [xy.tolist()]
+                    ann_dict = {
+                                "segmentation": [polygon],
+                                "bbox": bbox,
+                                "area": area,
+                                "iscrowd": 0,
+                                "category_id": int(c)+1
+                            }
+                    annotations.append(ann_dict)
         
-        return xy
+        return annotations
 
+    def binary_mask_to_polygon(self, binary_mask):
+        contours, _ = cv2.findContours(binary_mask.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        polygons = []
+        for contour in contours:
+            contour = contour.flatten().tolist()
+            polygons.append(contour)
+        return polygons
+    
+    def contour_to_bbox(self, contour):
+        x_ = contour[:, 0]
+        y_ = contour[:, 1]
+        bbox = [
+            float(min(x_)),
+            float(min(y_)),
+            float(max(x_)-min(x_)),
+            float(max(y_)-min(y_))
+            ]
+        area = bbox[2]*bbox[3]
+
+        return bbox, area
 
 
 class LetterBoxPreprocess:
