@@ -23,10 +23,10 @@ def arange_inputs(input_path):
         input = [
             os.path.join(input_path, f)
             for f in os.listdir(input_path)
-            if f.split(".")[-1] in ["jpg", "png", "bmp"]
+            if f.split(".")[-1] in ["jpg", "png", "bmp", "tiff"]
         ]
     else:
-        if input_path.split(".")[-1] in ["jpg", "png", "bmp"]:
+        if input_path.split(".")[-1] in ["jpg", "png", "bmp", "tiff"]:
             input = [input_path]
         elif input_path.split(".")[-1] in ["avi", "mp4"]:
             input = input_path

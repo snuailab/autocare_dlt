@@ -90,16 +90,27 @@ def parsing_config(args: Box) -> Box:
                     "anchors", None
                 )
 
-    output_path = os.path.join(cfg["output_dir"], cfg["exp_name"])
+    if cfg.get("output_dir", False) == False:
+        return Box(cfg)
+    
+    if cfg.get("exp_name", False):
+        output_path = os.path.join(cfg["output_dir"], cfg["exp_name"])
+    else:
+        output_path = cfg["output_dir"]
+
     cfg["output_path"] = output_path
     if (
         not cfg.get("overwrite", False)
         and not cfg.get("resume", False)
         and os.path.exists(output_path)
     ):
-        exp_name = cfg["exp_name"]
-        raise KeyError(f"exp_name {exp_name} is already exist")
-
+        if cfg.get("exp_name", False):    
+            exp_name = cfg["exp_name"]
+            raise KeyError(f"exp_name {exp_name} is already exist")
+        else:
+            output_dir = cfg["output_dir"]
+            raise KeyError(f"output directory {output_dir} is already exist")
+        
     # TODO: multi head config
     # cls_per_attr = [len(a) for attr, a in self.classes.items()]
     # self.cfg["model"]["head"]["num_cls_per_attributes"] = cls_per_attr
