@@ -29,6 +29,12 @@ def make_parser():
         required=True,
     )
     parser.add_argument(
+        "--dynamic_batch",
+        type=int,
+        default=1,
+        help="dynamic batch size",
+    )
+    parser.add_argument(
         "--input_size",
         nargs="+",
         default=[],
@@ -60,6 +66,7 @@ def run(
     ckpt: Union[str, dict],
     input_size: list = None,
     input_channels: int = 3,
+    dynamic_batch: int = 1,
     opset: int = 11,
     no_onnxsim: bool = False,
 ) -> None:
@@ -112,7 +119,6 @@ def run(
     else:
         raise BaseException(f"Invalid input_size : {input_size}")
 
-    dynamic_batch = 16 if torch.cuda.is_available() else 1
     if cfg["task"] in detector_list:
         outputs_list = ["bbox", "conf", "class_id"]
         dummy_input = torch.randn(
