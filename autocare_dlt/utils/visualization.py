@@ -149,17 +149,21 @@ class DrawResults:
 
     # TODO: add with resized image
     def draw_segmentation(self, img, results):
-        cmap = np.zeros((img.shape[0], img.shape[1], 3))
+        cmap = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
         for res in results:
             cls= res["category_id"]
             color = self.colors[cls-1]
             masks = res["segmentation"]
             for mask in masks:
-                mask = np.array(mask)
+                mask = np.array(mask, dtype=np.uint8)
                 mask = mask.reshape(-1, 2)
                 if mask.shape[0] > 0:
-                    cmap[mask[:, 0], mask[:, 1]]=color
-
+                    for point in mask:
+                        if point[0] < img.shape[0] and point[1] < img.shape[1]:
+                            cmap[point[0], point[1], 0] = color[0]
+                            cmap[point[0], point[1], 1] = color[1]
+                            cmap[point[0], point[1], 2] = color[2]
+                    
         if len(img.shape) == 2:
             img = np.expand_dims(img, axis=2)
             img = np.concatenate([img, img, img], axis=2)
