@@ -6,7 +6,7 @@ from pycocotools.coco import COCO
 from torch.utils.data import Dataset
 import cv2
 from scipy.ndimage import binary_dilation
-
+import base64
 from autocare_dlt.core.dataset.utils import *
 
 class COCOSegmentationDataset(Dataset):
@@ -86,6 +86,8 @@ class COCOSegmentationDataset(Dataset):
 
             seg_label = np.full((height, width), len(classes))
             for obj in annotations:
+                if isinstance(obj["segmentation"]["counts"], str):
+                    obj["segmentation"]["counts"] = base64.b64decode(obj["segmentation"]["counts"])
                 cls_index = self.data_class_ids.index(obj["category_id"])
                 cls = self.data_classes[cls_index]
                 if cls not in classes:
