@@ -1,4 +1,5 @@
 import os
+import random
 
 import numpy as np
 import torch
@@ -52,9 +53,22 @@ class COCOSegmentationDataset(Dataset):
             "augmentation", {"ImageNormalization": {"type": "base"}}
         )
 
-        self.pad = augmentations.get("Pad", False)
-        if self.pad:
-            self.pad = self.pad.get("ratio", 0.0)
+        self.pad_cfg = augmentations.get("Pad", False)
+        self.pad_ratio = 0.0
+        self.pad_position = "symmetric"
+        self.pad_candidates = [
+            "symmetric",
+            "bottom_right",
+            "top_right",
+            "top_left",
+            "bottom_left",
+        ]
+        if self.pad_cfg:
+            self.pad_ratio = self.pad_cfg.get("ratio", 0.0)
+            self.pad_position = self.pad_cfg.get("position", "symmetric")
+            self.pad_candidates = self.pad_cfg.get(
+                "candidates", self.pad_candidates
+            )
 
         self.transform = ImageAugmentation(augmentations, mode="segmentation")
 
@@ -86,7 +100,9 @@ class COCOSegmentationDataset(Dataset):
 
             seg_label = np.full((height, width), len(classes))
             for obj in annotations:
-                if isinstance(obj["segmentation"]["counts"], str):
+                if isinstance(obj["segmentation"], list):
+                    pass
+                elif isinstance(obj["segmentation"]["counts"], str):
                     obj["segmentation"]["counts"] = base64.b64decode(obj["segmentation"]["counts"])
                 cls_index = self.data_class_ids.index(obj["category_id"])
                 cls = self.data_classes[cls_index]
@@ -126,6 +142,32 @@ class COCOSegmentationDataset(Dataset):
     def segmask_resize(self, label):
         label = cv2.resize(label, self.img_size, interpolation=cv2.INTER_NEAREST)
         return label
+
+    def _resolve_pad(self, h, w):
+        side_pad_h = int(h * self.pad_ratio)
+        side_pad_w = int(w * self.pad_ratio)
+        total_pad_h = side_pad_h * 2
+        total_pad_w = side_pad_w * 2
+
+        position = self.pad_position
+        if position == "random":
+            position = random.choice(self.pad_candidates)
+
+        mapping = {
+            "symmetric": (side_pad_h, side_pad_h, side_pad_w, side_pad_w),
+            "bottom_right": (0, total_pad_h, 0, total_pad_w),
+            "top_right": (total_pad_h, 0, 0, total_pad_w),
+            "top_left": (total_pad_h, 0, total_pad_w, 0),
+            "bottom_left": (0, total_pad_h, total_pad_w, 0),
+        }
+        if position not in mapping:
+            raise ValueError(
+                f"Unsupported pad position: {position}. "
+                f"Available: {sorted(mapping.keys())}"
+            )
+
+        top, bottom, left, right = mapping[position]
+        return (top, bottom, left, right), position
     
     def __len__(self):
         return len(self.img_files)
@@ -140,10 +182,23 @@ class COCOSegmentationDataset(Dataset):
         labels = self.segmask_resize(labels)
 
         # Padding
+        pad_position = "none"
         pad = (0, 0)
-        if self.pad:
-            img = np.pad(img, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad)), (0, 0)), "constant", constant_values=0)
-            labels = np.pad(labels, ((int(h*self.pad), int(h*self.pad)), (int(w*self.pad), int(w*self.pad))), "constant", constant_values=len(self.classes))
+        if self.pad_ratio:
+            (top, bottom, left, right), pad_position = self._resolve_pad(h, w)
+            img = np.pad(
+                img,
+                ((top, bottom), (left, right), (0, 0)),
+                "constant",
+                constant_values=0,
+            )
+            labels = np.pad(
+                labels,
+                ((top, bottom), (left, right)),
+                "constant",
+                constant_values=len(self.classes),
+            )
+            pad = (left + right, top + bottom)
 
         # Converting Background Channels for Use with Albumentation
         labels = np.where(labels == len(self.classes), 0, labels+1)
@@ -162,6 +217,7 @@ class COCOSegmentationDataset(Dataset):
             "ori_shape": (h0, w0),
             "ratio": ((h / h0, w / w0), pad),
             "path": self.img_files[index],
+            "pad_position": pad_position,
         }
 
         return img, outs
